@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import JobPostForm
 from .models import Job, JOB_TYPE_CHOICES
@@ -35,3 +35,30 @@ def recruiter_job(request):
     
     myjobs = Job.objects.filter(posted_by = request.user).order_by('-created_at') # "-" for descending order
     return render(request,'jobs/recruiter_jobs.html',{'jobs':myjobs})
+
+
+@login_required
+def edit_job(request, job_id):
+    job = get_object_or_404(Job, id=job_id, posted_by=request.user)
+
+    if request.method == 'POST':
+        form = JobPostForm(request.POST, instance=job)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Job updated successfully.')
+            return redirect('recruiter_dashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = JobPostForm(instance=job)
+    return render(request, 'jobs/edit_job.html', {'form_data': form})
+
+
+@login_required
+def delete_job(request, job_id):
+    job = get_object_or_404(Job, id=job_id, posted_by=request.user)
+    if request.method == 'POST':
+        job.delete()
+        messages.success(request, 'Job deleted successfully.')
+        return redirect('recruiter_dashboard')
+    return render(request, 'jobs/recruiter_jobs.html', {'jobs': job})

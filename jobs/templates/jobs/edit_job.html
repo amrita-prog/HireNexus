@@ -1,0 +1,51 @@
+{% extends 'accounts/base.html' %}
+{% block title %} Post a new job {% endblock %}
+
+{% block content %}
+<div class="container mt-5 col-md-8">
+    <div class="card p-4 shadow-sm">
+        <h2 class="mb-4 text-primary">Edit Job</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                {{ form_data.title }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                {{ form_data.description }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Company</label>
+                {{ form_data.company }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Location</label>
+                {{ form_data.location }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Job Type</label>
+                {{ form_data.job_type }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Deadline</label>
+                {{ form_data.deadline }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Salary</label>
+                {{ form_data.salary }}
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Update Job</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
