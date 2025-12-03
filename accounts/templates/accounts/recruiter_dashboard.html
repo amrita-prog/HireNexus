@@ -2,10 +2,83 @@
 {% block title %} Recruiter Dashboard {% endblock %}
 
 {% block content %}
-<div container="row mb-4">
-    <h2 class="text-primary mb-4">Welcome to Recruiter Dashboard</h2>
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary">Welcome, {{ request.user.full_name }}</h2>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <h5>Total Jobs</h5>
+                    <h2>{{ total_jobs }}</h2>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <h5>Total Application</h5>
+                    <h2>35</h2>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <h5>Most Applied Jobs</h5>
+                    <h2>20</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{% url 'job_create' %}" class="btn btn-success btn-sm me-4">Post a New Job</a>
+            <a href="{% url 'recruiter_jobs' %}" class="btn btn-warning btn-sm me-2">View Your Posted Jobs</a>
+        </div>
+
+        
+
+    </div>
 </div>
 
-<a href="{% url 'job_create' %}">Create job</a>
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <h5 class="mb-3">
+            Applications Per Job 
+        </h5>
+        <canvas id="jobChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('jobChart').getContext('2d')
+    const jobChart = new Chart(
+        ctx,{
+            type:'bar',
+            data:{
+                labels: {{ chart_label|safe }},
+                datasets : [{
+                    label: 'Application Count',
+                    data: {{ chart_data|safe }},
+                    backgroundColor: 'rgb(255,192,203)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+            }]
+        },
+        options: {
+            'responsive': true,
+            'scales':{
+                y:{
+                    beginAtZero: true,
+                    precision:0
+                }
+            }
+        }
+    });
+</script>
 
 {% endblock %}

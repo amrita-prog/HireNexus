@@ -5,6 +5,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .models import CustomUser
 from django.contrib.auth.decorators import login_required
+from jobs.models import Job
+from django.db.models import Count
 
 # Create your views here.
 
@@ -72,7 +74,19 @@ def student_dashboard(request):
 
 @login_required
 def recruiter_dashboard(request):
-    return render(request, 'accounts/recruiter_dashboard.html')
+    user = request.user
+    total_jobs = Job.objects.count()
+    job_type_data = (
+        Job.objects.values('job_type').annotate(count=Count('job_type')).order_by('-count')
+    )
+    chart_label = [item['job_type'] for item in job_type_data]
+    chart_data = [item['count'] for item in job_type_data]
+
+    return render(request, 'accounts/recruiter_dashboard.html', {
+        'total_jobs': total_jobs,
+        'chart_label': chart_label,
+        'chart_data': chart_data,
+    })
 
 @login_required
 def custom_logout(request):

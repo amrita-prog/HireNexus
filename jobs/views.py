@@ -39,10 +39,10 @@ def recruiter_job(request):
 
 @login_required
 def edit_job(request, job_id):
-    job = get_object_or_404(Job, id=job_id, posted_by=request.user)
+    job = get_object_or_404(Job, id=job_id, posted_by=request.user) #table pass if exist
 
     if request.method == 'POST':
-        form = JobPostForm(request.POST, instance=job)
+        form = JobPostForm(request.POST, instance=job) # instance to populate form with existing data
         if form.is_valid():
             form.save()
             messages.success(request, 'Job updated successfully.')
