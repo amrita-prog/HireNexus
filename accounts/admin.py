@@ -3,4 +3,5 @@ from django.contrib import admin
 # Register your models here.
 
 
-# amrita@gmail.com = hirenexus@123
+# itizamritamishra@gmail.com = "hirenexus@123"   student
+# ankit@gmail.com = "django2025"    recruiter

@@ -1,5 +1,5 @@
 from django.db import models
-from django.conf import settings
+from django.conf import settings # for customUser in accounts app
 
 # Create your models here.
 JOB_TYPE_CHOICES = [
@@ -23,3 +23,27 @@ class Job(models.Model):
     def __str__(self):
         return f"{self.title} at {self.company}"
     
+
+APPLICATION_STATUS_CHOICES = [
+    ('applied', 'Applied'),
+    ('shortlisted', 'Shortlisted'),
+    ('intervie_1', 'L1 Cleared '),
+    ('interview_technical', 'Technical Cleared'),
+    ('hr_cleared', 'HR Cleared'),
+    ('rejected', 'Rejected'),
+    ('offered', 'Offered'),
+    ('hold_on', 'Hold On'),
+]
+
+class Application(models.Model):
+    job = models.ForeignKey('Job', on_delete=models.CASCADE) #relation to Job model
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    applied_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=50, choices=APPLICATION_STATUS_CHOICES, default='applied')
+    status_notified = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('job', 'student') # to prevent multiple applications for the same job by the same student
+
+    def __str__(self):
+        return f"{self.student.username} applied for {self.job.title}"
