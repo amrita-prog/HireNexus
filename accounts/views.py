@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required
 from jobs.models import Job, Application
 from django.db.models import Count
 
-# Create your views here.
 
 def student_signup(request):
     if request.method == 'POST':
@@ -104,7 +103,7 @@ def student_dashboard(request):
 
     chart_label = [item['job_type'] for item in job_type_data]
     chart_data = [item['count'] for item in job_type_data]
-    
+        
     return render(request, 'accounts/student_dashboard.html',{
         'total_jobs': total_jobs,
         'jobs_applied': jobs_applied,
@@ -113,3 +112,10 @@ def student_dashboard(request):
         'applications': applications,
         'unseen_count': unseen_count,
     })
+
+
+@login_required
+def student_applied_jobs(request):
+    applications = Application.objects.filter(student=request.user)
+    applications.filter(status_notified=True).exclude(status='applied').update(status_notified=False)
+    return render(request, 'accounts/student_applied_jobs.html', {'applications': applications})

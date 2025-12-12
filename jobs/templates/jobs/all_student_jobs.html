@@ -3,7 +3,11 @@
 
 {% block content %}
     <div class="container mt-5">
-        <h2 class="mb-4 text-success">All Jobs</h2>
+        {% if user.is_authenticated and user.roles == 'student' %}
+        <h2 class="mb-4 text-success">All Opening for students</h2>
+        {% else %}
+        <h2 class="mb-4 text-success">Your Posted Jobs</h2>
+        {% endif %}
         <table id="jobsTable" class="table table-stripes table-bordered">
             <thead class="table-dark">
                 <tr>
