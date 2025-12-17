@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import JobPostForm
-from .models import Job, JOB_TYPE_CHOICES, Application
+from .models import Job, JOB_TYPE_CHOICES, Application, APPLICATION_STATUS_CHOICES
 from django.contrib import messages
 
 # Create your views here.
@@ -88,3 +88,30 @@ def apply_job(request, job_id):
         messages.success(request, "Your application has been submitted.")
 
     return redirect('all_student_jobs')
+
+
+@login_required
+def view_applicants(request, job_id):
+    job_data = get_object_or_404(Job, id=job_id, posted_by=request.user)
+    applications = Application.objects.filter(job=job_data).select_related('student')
+    return render(request, 'jobs/view_applicants.html', {
+        'applications': applications,
+        'job': job_data,
+        'status_choices': APPLICATION_STATUS_CHOICES,
+    })
+
+
+@login_required
+def update_application_status(request, application_id):
+    if request.method == 'POST':
+        application = get_object_or_404(Application, id=application_id)
+        new_status = request.POST.get('status')
+
+        if new_status in dict(APPLICATION_STATUS_CHOICES):
+            application.status = new_status
+            application.status_notified = True  # Reset notification flag
+            application.save()
+            messages.success(request,f"Application status updated to {new_status.title()} successfully")
+        else:
+            messages.error(request, "Invalid status selected.")
+    return redirect('view_applicants', job_id=application.job.id)

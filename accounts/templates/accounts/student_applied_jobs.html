@@ -1,14 +1,15 @@
 {% extends 'accounts/base.html'%}
-{% block title %} Student Dashboard {% endblock %}
-
+{% block title %} Your applied Jobs {% endblock %}
 {% block content %}
+
 <h3>Your Applied Jobs</h3>
 <table class="table">
+
     <thead>
         <tr>
             <th>Job Title</th>
             <th>Company</th>
-            <th>Status</th> 
+            <th>Status</th>
             <th>Updated On</th>
         </tr>
     </thead>
@@ -16,16 +17,31 @@
     <tbody>
         {% for app in applications %}
         <tr>
-            <td>{{ app.job.title }}</td>
-            <td>{{ app.job.company }}</td>
+            <td> {{ app.job.title }} </td>
+            <td> {{ app.job.company }}</td>
             <td>
-                <span class="badge {% if app.status == 'selected' %}bg-success
-                                   {% elif app.status == 'rejected' %}bg-danger
-                                   {% elif app.status == 'shortlisted' %}bg-primary
-                                   {% else %}bg-secondary {% endif %}"
-                {{ app.get_status_notified and app.status != 'applied'}}></span>
+                <span class="badge 
+                {% if app.status == 'selected' %}bg-sucsess
+                {% elif app.status == 'rejected' %}bg-danger
+                {% elif app.status == 'shortlisted' %}bg-primary
+                {% elif app.status == 'rejected' %}btn-outline-warning
+                {% else %}bg-secondary 
+                {% endif %}
+                ">
+
+                {{ app.get_status_display }}
+                </span>
+
+                {% if app.status_notified and app.status != 'applied' %}
+                <span class="badge bg-warning text-dark">New!</span>
+                {% endif %}
             </td>
+
+            <td>{{ app.applied_at|date:"d M Y, H: i"}}</td>
         </tr>
+
+        {% endfor %}
     </tbody>
 </table>
+
 {% endblock %}

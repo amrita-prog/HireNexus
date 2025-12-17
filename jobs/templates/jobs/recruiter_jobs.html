@@ -14,6 +14,7 @@
                     <th>Job Type</th>
                     <th>Posted On</th>
                     <th>Deadline</th>
+                    <th>Applicants</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -26,6 +27,7 @@
                     <td>{{ job.job_type }}</td>
                     <td>{{ job.created_at|date:"d M Y" }}</td>
                     <td>{{ job.deadline|date:"d M Y" }}</td>
+                    <td><a href="{% url 'view_applicants' job.id %}">{{ job.application_set.count }}</a></td>
                     <td>
                         <a href="{% url 'edit_job' job.id %}" class="btn btn-warning btn-sm">Edit</a>
                         <form action="{% url 'delete_job' job.id %}" method="POST" style="display: inline;">
