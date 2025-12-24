@@ -70,15 +70,24 @@ def custom_login(request):
 @login_required
 def recruiter_dashboard(request):
     user = request.user
+    jobs = Job.objects.filter(posted_by=user)
     total_jobs = Job.objects.count()
+    total_applications = Application.objects.filter(job__posted_by = request.user).count()
+
     job_type_data = (
         Job.objects.values('job_type').annotate(count=Count('job_type')).order_by('-count')
+    )
+    most_applied_jobs = (
+        jobs.annotate(app_count=Count('application'))
+        .order_by('-app_count').first()
     )
     chart_label = [item['job_type'] for item in job_type_data]
     chart_data = [item['count'] for item in job_type_data]
 
     return render(request, 'accounts/recruiter_dashboard.html', {
         'total_jobs': total_jobs,
+        'total_applications': total_applications,
+        'most_applied_jobs': most_applied_jobs,
         'chart_label': chart_label,
         'chart_data': chart_data,
     })

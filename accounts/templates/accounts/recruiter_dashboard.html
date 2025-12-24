@@ -19,7 +19,7 @@
             <div class="card shadow text-center">
                 <div class="card-body">
                     <h5>Total Application</h5>
-                    <h2>35</h2>
+                    <h2>{{ total_applications }}</h2>
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@
             <div class="card shadow text-center">
                 <div class="card-body">
                     <h5>Most Applied Jobs</h5>
-                    <h2>20</h2>
+                    <p><strong>{{ most_applied_jobs.title }}</strong> - {{ most_applied_jobs.application_set.count }} Applications</p>
                 </div>
             </div>
         </div>
