@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http.response import HttpResponse
-from .forms import StudentSignUpForm, RecruiterSignUpForm
+from .forms import StudentSignUpForm, RecruiterSignUpForm, ProfileEditForm
 from django.contrib.auth import login, logout, authenticate 
 from django.contrib import messages
 from .models import CustomUser
@@ -128,3 +128,21 @@ def student_applied_jobs(request):
     applications = Application.objects.filter(student=request.user)
     applications.filter(status_notified=True).exclude(status='applied').update(status_notified=False)
     return render(request, 'accounts/student_applied_jobs.html', {'applications': applications})
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, request.FILES, instance=user, user=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully.")
+            if user.roles == 'student':
+                return redirect('student_dashboard')
+            else:
+                return redirect('recruiter_dashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = ProfileEditForm(instance=user, user=user)
+    return render(request, 'accounts/edit_profile.html', {'form': form})

@@ -22,7 +22,7 @@
             <span class="navbar-text text-light me-3">
                 Welcome, {{ user.full_name |default:user.email }} 
             </span>
-            <a href="" class="btn btn-outline-warning btn-sm">Edit Profile</a>
+            <a href="{% url 'edit_profile' %}" class="btn btn-outline-warning btn-sm">Edit Profile</a>
             <a href="{% url 'logout' %}" class="btn btn-outline-warning btn-sm">Logout</a>
             {% endif %}
         </div>

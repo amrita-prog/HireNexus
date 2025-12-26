@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <h3 class="text-center mb-4">Edit Profile</h3>
+
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    {{ form.full_name }}
+                    {% if form.full_name.errors %}
+                        <small class="text-danger">{{ form.full_name.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-3">
+                    <label class="form-label">Phone</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                        <small class="text-danger">{{ form.phone.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <!-- Profile Image -->
+                <div class="mb-3">
+                    <label class="form-label">Profile Image</label>
+                    {{ form.profile_image }}
+                    {% if form.profile_image.errors %}
+                        <small class="text-danger">{{ form.profile_image.errors }}</small>
+                    {% endif %}
+
+                    {% if user.profile_image %}
+                        <div class="mt-2">
+                            <img src="{{ user.profile_image.url }}" alt="Profile Image"
+                                 width="100" height="100" class="rounded-circle">
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Resume (only for students) -->
+                {% if form.resume %}
+                <div class="mb-3">
+                    <label class="form-label">Resume</label>
+                    {{ form.resume }}
+                    {% if form.resume.errors %}
+                        <small class="text-danger">{{ form.resume.errors }}</small>
+                    {% endif %}
+
+                    {% if user.resume %}
+                        <p class="mt-2">
+                            <a href="{{ user.resume.url }}" target="_blank">View current resume</a>
+                        </p>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary w-100">
+                    Update Profile
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

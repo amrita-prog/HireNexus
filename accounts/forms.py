@@ -14,8 +14,21 @@ class StudentSignUpForm(UserCreationForm):
         base_username = user.email.split('@')[0] # amrita@gmail.com --> [amrita,gmail.com]
         user.username = f"{base_username}_{uuid.uuid4().hex[:4]}" # this will generate username with hexadecimal value
         user.roles = 'student'
+        
+        profile_image = self.cleaned_data.get('profile_image')
+        resume = self.cleaned_data.get('resume')
         if commit:
+            user.profile_image = None
+            user.resume = None
             user.save()
+
+            if profile_image:
+                user.profile_image = profile_image
+
+            if resume:
+                user.resume = resume
+
+            user.save(update_fields=['profile_image','resume'])
         return user
     
 
@@ -33,3 +46,15 @@ class RecruiterSignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['full_name', 'phone', 'profile_image', 'resume']
+
+        def __int__(self, *args, **kwargs):
+            user = kwargs.pop('user', None)
+            super(ProfileEditForm,self).__init__(*args, **kwargs)
+            if user and user.roles != 'student':
+                self.fields.pop('resume')
