@@ -112,14 +112,26 @@ def student_dashboard(request):
 
     chart_label = [item['job_type'] for item in job_type_data]
     chart_data = [item['count'] for item in job_type_data]
-        
+
+    applications = Application.objects.filter(student=user).select_related('job')
+
+    unseen_updates = (
+        applications.filter(status_notified=True).exclude(status='applied').order_by('-applied_at')
+    )        
+
+    unseen_count = unseen_updates.count()
+    latest_updates = unseen_updates
+
     return render(request, 'accounts/student_dashboard.html',{
         'total_jobs': total_jobs,
         'jobs_applied': jobs_applied,
         'chart_label': chart_label,
         'chart_data': chart_data,
         'applications': applications,
+        
+        # notifications
         'unseen_count': unseen_count,
+        'latest_updates': latest_updates,
     })
 
 

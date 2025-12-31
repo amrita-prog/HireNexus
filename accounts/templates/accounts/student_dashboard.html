@@ -5,6 +5,30 @@
 
 <div class="row mb-4">
     <h2 class="text-primary mb-4">Welcome to Student Dashboard</h2>
+
+    {% if unseen_count > 0 %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const updates = [
+            {% for app in latest_updates %}
+                {
+                    job: "{{ app.job.title|escapejs }}",
+                    status: "{{ app.get_status_display|escapejs }}"
+                }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+        updates.forEach((u, i) => {
+            setTimeout(() => {
+                Toast.fire({
+                    icon: "info",
+                    title: `Status updated: ${u.job} → ${u.status}`
+                });
+            }, i * 3000);
+        });
+  });
+    </script>
+    {% endif %}
+
     <div class="row mb-4">
         <div class="col-md-6">
 
@@ -72,4 +96,5 @@
     }
     });
 </script>
+
 {% endblock %}

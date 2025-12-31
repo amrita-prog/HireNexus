@@ -29,6 +29,16 @@
        </div> 
     </nav>
 
+    <script>
+    window.Toast = window.Toast || Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
+    </script>
+
     {% block content %}
 
     {% endblock %}
@@ -36,11 +46,9 @@
     {% if messages %}
         <script>
             {% for message in messages %}
-                Swal.fire({
-                    icon: '{{ message.tags }}',
-                    title: '{{ message|escapejs }}',
-                    timer: 3500,
-                    showConfirmButton: false
+                Toast.fire({
+                icon: "{% if message.tags == 'success' %} success {% elif message.tags == 'error' %} error {% else %} info {% endif %}",
+                title: "{{ message|escapejs }}"
                 });
             {% endfor %}
         </script>
