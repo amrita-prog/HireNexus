@@ -1,82 +1,175 @@
-{% extends "base.html" %}
+{% extends "accounts/base.html" %}
+{% load widget_tweaks %}
 {% load static %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+<div class="container py-5" style="max-width: 900px;">
+  <div class="row justify-content-center">
+    <div class="col-12">
 
-            <h3 class="text-center mb-4">Edit Profile</h3>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
 
-            <!-- Messages -->
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+              <h3 class="mb-1">Edit Profile</h3>
+              <p class="text-muted mb-0">Update your basic details, profile photo and resume.</p>
+            </div>
+          </div>
 
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
+          <!-- Messages -->
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} mb-3" role="alert">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          <form method="POST" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <div class="row g-4">
+
+              <!-- LEFT: Form Fields -->
+              <div class="col-md-7">
 
                 <!-- Full Name -->
                 <div class="mb-3">
-                    <label class="form-label">Full Name</label>
-                    {{ form.full_name }}
-                    {% if form.full_name.errors %}
-                        <small class="text-danger">{{ form.full_name.errors }}</small>
-                    {% endif %}
+                  <label class="form-label" for="{{ form.full_name.id_for_label }}">Full Name</label>
+                  {% render_field form.full_name class="form-control" placeholder="Enter your full name" %}
+                  {% if form.full_name.errors %}
+                    <div class="text-danger small mt-1">{{ form.full_name.errors|striptags }}</div>
+                  {% endif %}
                 </div>
 
                 <!-- Phone -->
                 <div class="mb-3">
-                    <label class="form-label">Phone</label>
-                    {{ form.phone }}
-                    {% if form.phone.errors %}
-                        <small class="text-danger">{{ form.phone.errors }}</small>
-                    {% endif %}
+                  <label class="form-label" for="{{ form.phone.id_for_label }}">Phone</label>
+                  {% render_field form.phone class="form-control" placeholder="Enter phone number" %}
+                  {% if form.phone.errors %}
+                    <div class="text-danger small mt-1">{{ form.phone.errors|striptags }}</div>
+                  {% endif %}
                 </div>
 
                 <!-- Profile Image -->
-                <div class="mb-3">
-                    <label class="form-label">Profile Image</label>
-                    {{ form.profile_image }}
-                    {% if form.profile_image.errors %}
-                        <small class="text-danger">{{ form.profile_image.errors }}</small>
-                    {% endif %}
+                <!-- Profile Image -->
+<div class="mb-3">
+  <label class="form-label">Profile Image</label>
 
-                    {% if user.profile_image %}
-                        <div class="mt-2">
-                            <img src="{{ user.profile_image.url }}" alt="Profile Image"
-                                 width="100" height="100" class="rounded-circle">
-                        </div>
-                    {% endif %}
-                </div>
+  {% if user.profile_image %}
+    <div class="border rounded-3 p-3 bg-light d-flex align-items-center justify-content-between mb-2">
+      <div class="d-flex align-items-center gap-3">
+        <img src="{{ user.profile_image.url }}" class="rounded-circle"
+             style="width:56px;height:56px;object-fit:cover;" alt="Profile">
+        <div>
+          <div class="fw-semibold">Current profile photo</div>
+          <a href="{{ user.profile_image.url }}" target="_blank" class="small">Open</a>
+        </div>
+      </div>
+
+      <div class="form-check">
+        {{ form.remove_profile_image }}
+        <label class="form-check-label small" for="{{ form.remove_profile_image.id_for_label }}">
+          Remove
+        </label>
+      </div>
+    </div>
+  {% endif %}
+
+  {% render_field form.profile_image class="form-control" %}
+  <div class="form-text">Recommended: square JPG/PNG.</div>
+
+  {% if form.profile_image.errors %}
+    <div class="text-danger small mt-1">{{ form.profile_image.errors|striptags }}</div>
+  {% endif %}
+</div>
 
                 <!-- Resume (only for students) -->
                 {% if form.resume %}
-                <div class="mb-3">
-                    <label class="form-label">Resume</label>
-                    {{ form.resume }}
+                  <div class="mb-3">
+                    <label class="form-label" for="{{ form.resume.id_for_label }}">Resume (PDF)</label>
+                    {% render_field form.resume class="form-control" %}
                     {% if form.resume.errors %}
-                        <small class="text-danger">{{ form.resume.errors }}</small>
+                      <div class="text-danger small mt-1">{{ form.resume.errors|striptags }}</div>
                     {% endif %}
 
                     {% if user.resume %}
-                        <p class="mt-2">
-                            <a href="{{ user.resume.url }}" target="_blank">View current resume</a>
-                        </p>
+                      <div class="mt-2">
+                        <a class="btn btn-outline-primary btn-sm" href="{{ user.resume.url }}" target="_blank">
+                          View current resume
+                        </a>
+                      </div>
                     {% endif %}
-                </div>
+                  </div>
                 {% endif %}
 
-                <button type="submit" class="btn btn-primary w-100">
-                    Update Profile
-                </button>
-            </form>
+              </div>
+
+              <!-- RIGHT: Preview -->
+              <div class="col-md-5">
+
+                <div class="p-3 p-md-4 bg-light border rounded-3">
+                  <div class="text-center">
+
+                    {% if user.profile_image %}
+                      <img
+                        src="{{ user.profile_image.url }}"
+                        alt="Profile Image"
+                        class="rounded-circle shadow-sm mb-3"
+                        style="width: 140px; height: 140px; object-fit: cover;"
+                      >
+                    {% else %}
+                      <div class="rounded-circle bg-white border d-flex align-items-center justify-content-center mx-auto mb-3"
+                           style="width: 140px; height: 140px;">
+                        <span class="text-muted small">No Image</span>
+                      </div>
+                    {% endif %}
+
+                    <h6 class="mb-1">{{ user.full_name|default:"Your Name" }}</h6>
+                    <p class="text-muted small mb-0">{{ user.email }}</p>
+                  </div>
+
+                  <hr class="my-3">
+
+                  <div class="small">
+                    <div class="d-flex justify-content-between mb-2">
+                      <span class="text-muted">Phone</span>
+                      <span class="fw-semibold">{{ user.phone|default:"-" }}</span>
+                    </div>
+
+                    {% if user.profile_image %}
+                      <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Profile Photo</span>
+                        <a href="{{ user.profile_image.url }}" target="_blank">Open</a>
+                      </div>
+                    {% endif %}
+
+                    {% if user.resume %}
+                      <div class="d-flex justify-content-between">
+                        <span class="text-muted">Resume</span>
+                        <a href="{{ user.resume.url }}" target="_blank">Open</a>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary btn-lg">
+                Update Profile
+              </button>
+            </div>
+
+          </form>
 
         </div>
+      </div>
+
     </div>
+  </div>
 </div>
 {% endblock %}

@@ -49,12 +49,42 @@ class RecruiterSignUpForm(UserCreationForm):
 
 
 class ProfileEditForm(forms.ModelForm):
+    remove_profile_image = forms.BooleanField(required=False, label="Remove profile image")
+    remove_resume = forms.BooleanField(required=False, label="Remove resume")
+
     class Meta:
         model = CustomUser
         fields = ['full_name', 'phone', 'profile_image', 'resume']
 
-        def __int__(self, *args, **kwargs):
-            user = kwargs.pop('user', None)
-            super(ProfileEditForm,self).__init__(*args, **kwargs)
-            if user and user.roles != 'student':
-                self.fields.pop('resume')
+        # IMPORTANT: FileInput removes the "Currently/Clear" UI completely
+        widgets = {
+            "full_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter your full name"}),
+            "phone": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter phone number"}),
+            "profile_image": forms.FileInput(attrs={"class": "form-control"}),
+            "resume": forms.FileInput(attrs={"class": "form-control"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+        # Hide resume for non-student
+        if user and getattr(user, "roles", None) != "student":
+            self.fields.pop("resume", None)
+            self.fields.pop("remove_resume", None)
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+
+        # handle removals
+        if self.cleaned_data.get("remove_profile_image"):
+            user.profile_image.delete(save=False)
+            user.profile_image = None
+
+        if "resume" in self.fields and self.cleaned_data.get("remove_resume"):
+            user.resume.delete(save=False)
+            user.resume = None
+
+        if commit:
+            user.save()
+        return user
