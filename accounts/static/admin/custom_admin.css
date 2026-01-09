@@ -1,0 +1,23 @@
+#header {
+    background: linear-gradient(90deg, #1e3a8a, #2563eb) !important;
+}
+
+#header h1 a {
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+
+#user-tools {
+    color: #e5e7eb !important;
+}
+
+#user-tools a {
+    color: #bfdbfe !important;
+    font-weight: 600;
+}
+
+
+#user-tools a:hover {
+    color: #ffffff !important;
+}
