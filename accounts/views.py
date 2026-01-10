@@ -107,13 +107,29 @@ def student_dashboard(request):
         Job.objects.values('job_type').annotate(count=Count('job_type')).order_by('-count')
     )
 
-    applications = Application.objects.filter(student = request.user)
-    unseen_count = applications.filter(status_notified=True).exclude(status='applied').count()
-
     chart_label = [item['job_type'] for item in job_type_data]
     chart_data = [item['count'] for item in job_type_data]
 
-    applications = Application.objects.filter(student=user).select_related('job')
+    # Get application status distribution
+    applications = Application.objects.filter(student=user).select_related('job').order_by('-applied_at')
+    status_data = applications.values('status').annotate(count=Count('status')).order_by('-count')
+    
+    # Map status codes to display names
+    status_mapping = {
+        'applied': 'Applied',
+        'shortlisted': 'Shortlisted',
+        'intervie_1': 'L1 Cleared',
+        'interview_technical': 'Technical Cleared',
+        'hr_cleared': 'HR Cleared',
+        'rejected': 'Rejected',
+        'offered': 'Offered',
+        'hold': 'On Hold'
+    }
+    
+    status_labels = [status_mapping.get(item['status'], item['status']) for item in status_data]
+    status_counts = [item['count'] for item in status_data]
+
+    recent_jobs = applications[:5]  # Get last 5 applications
 
     unseen_updates = (
         applications.filter(status_notified=True).exclude(status='applied').order_by('-applied_at')
@@ -127,7 +143,10 @@ def student_dashboard(request):
         'jobs_applied': jobs_applied,
         'chart_label': chart_label,
         'chart_data': chart_data,
+        'status_labels': status_labels,
+        'status_counts': status_counts,
         'applications': applications,
+        'recent_jobs': recent_jobs,
         
         # notifications
         'unseen_count': unseen_count,

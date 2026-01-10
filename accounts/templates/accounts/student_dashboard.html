@@ -1,99 +1,934 @@
-{% extends 'accounts/base.html'%}
-{% block title %} Student Dashboard {% endblock %}
+{% extends 'accounts/base.html' %}
+{% block title %}Student Dashboard{% endblock %}
 
 {% block content %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-<div class="row mb-4">
-    <h2 class="text-primary mb-4">Welcome to Student Dashboard</h2>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
 
+    body.dark-mode {
+        background-color: #1a1a1a;
+        color: #f3f4f6;
+    }
+
+    /* Glassmorphism Navbar */
+    .navbar {
+        background: rgba(255, 255, 255, 0.75) !important;
+        backdrop-filter: blur(30px) !important;
+        -webkit-backdrop-filter: blur(30px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        box-shadow: 0 8px 32px rgba(31, 41, 55, 0.1) !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1000 !important;
+        border-radius: 20px !important;
+        margin: 12px auto !important;
+        width: 95% !important;
+        max-width: 1400px !important;
+        padding: 12px 30px !important;
+    }
+
+    body {
+        padding-top: 15px;
+    }
+
+    .navbar-brand {
+        font-weight: 700 !important;
+        color: #1f2937 !important;
+        font-size: 1.4rem !important;
+        margin-right: 40px !important;
+    }
+
+    .navbar-brand:hover {
+        color: #3b82f6 !important;
+    }
+
+    .navbar-nav {
+        gap: 8px !important;
+        margin-left: auto !important;
+        margin-right: 20px !important;
+        align-items: center !important;
+    }
+
+    .nav-link {
+        color: #f9fafb !important;
+        font-weight: 500 !important;
+        transition: all 0.3s ease !important;
+        padding: 8px 18px !important;
+        border-radius: 8px !important;
+        font-size: 0.95rem !important;
+    }
+
+    .nav-link:hover {
+        color: #ffffff !important;
+        background-color: rgba(59, 130, 246, 0.2) !important;
+    }
+
+    .btn-outline-primary {
+        color: #ffffff !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        padding: 8px 24px !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: rgba(0, 0, 0, 0.6) !important;
+        color: white !important;
+        border-color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    .dashboard-wrapper {
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Header */
+    .dashboard-header {
+        margin-bottom: 40px;
+        border-bottom: 2px solid #e8eaed;
+        padding-bottom: 20px;
+    }
+
+    body.dark-mode .dashboard-header {
+        border-bottom-color: #404040;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+        color: #1f2937;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    body.dark-mode .dashboard-header h1 {
+        color: #f3f4f6;
+    }
+
+    .dashboard-header p {
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+
+    body.dark-mode .dashboard-header p {
+        color: #d1d5db;
+    }
+
+    .dashboard-header > div > div:last-child p {
+        color: #1f2937;
+    }
+
+    body.dark-mode .dashboard-header > div > div:last-child p {
+        color: #f3f4f6;
+    }
+
+    .dashboard-header > div > div:last-child p:last-child {
+        color: #9ca3af;
+    }
+
+    body.dark-mode .dashboard-header > div > div:last-child p:last-child {
+        color: #9ca3af;
+    }
+
+    /* Welcome message span styling for dark mode */
+    body.dark-mode .dashboard-header span[style*="color: #6b7280"] {
+        color: #a0a9b8 !important;
+    }
+
+    body.dark-mode .dashboard-header span[style*="color: #000000"] {
+        color: #f0f4f8 !important;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+
+    .stat-box {
+        background: white;
+        border-radius: 8px;
+        padding: 28px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border-left: 5px solid #3b82f6;
+        transition: box-shadow 0.3s ease;
+    }
+
+    body.dark-mode .stat-box {
+        background: #2d2d2d;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-box:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .stat-box:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-box.stat-2 {
+        border-left-color: #f97316;
+    }
+
+    .stat-box.stat-3 {
+        border-left-color: #06b6d4;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    body.dark-mode .stat-label {
+        color: #d1d5db;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+    }
+
+    body.dark-mode .stat-number {
+        color: #f3f4f6;
+    }
+
+    .stat-description {
+        font-size: 0.85rem;
+        color: #9ca3af;
+    }
+
+    body.dark-mode .stat-description {
+        color: #9ca3af;
+    }
+
+    /* Section Container */
+    .section-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        margin-bottom: 40px;
+        overflow: hidden;
+    }
+
+    body.dark-mode .section-card {
+        background: #2d2d2d;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .section-header {
+        padding: 24px;
+        border-bottom: 1px solid #e5e7eb;
+        background: linear-gradient(135deg, #f0f9ff 0%, #f0f5ff 100%);
+        border-left: 5px solid #3b82f6;
+    }
+
+    body.dark-mode .section-header {
+        border-bottom-color: #404040;
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    }
+
+    .section-header h2 {
+        font-size: 1.3rem;
+        color: #1f2937;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    body.dark-mode .section-header h2 {
+        color: #f3f4f6;
+    }
+
+    .section-body {
+        padding: 24px;
+    }
+
+    body.dark-mode .section-body {
+        background: #2d2d2d;
+    }
+
+    /* Chart Container */
+    .chart-container {
+        position: relative;
+        height: 320px;
+        margin: 0;
+    }
+
+    /* Table Styles */
+    .applications-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .applications-table thead {
+        background-color: #f9fafb;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    body.dark-mode .applications-table thead {
+        background-color: #1f2937;
+        border-bottom-color: #404040;
+    }
+
+    .applications-table th {
+        padding: 16px;
+        text-align: left;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    body.dark-mode .applications-table th {
+        color: #e5e7eb;
+    }
+
+    .applications-table tbody tr {
+        border-bottom: 1px solid #f3f4f6;
+        transition: background-color 0.2s ease;
+    }
+
+    body.dark-mode .applications-table tbody tr {
+        border-bottom-color: #404040;
+    }
+
+    .applications-table tbody tr:hover {
+        background-color: #f9fafb;
+    }
+
+    body.dark-mode .applications-table tbody tr:hover {
+        background-color: #3d3d3d;
+    }
+
+    .applications-table td {
+        padding: 16px;
+        color: #374151;
+    }
+
+    body.dark-mode .applications-table td {
+        color: #e5e7eb;
+    }
+
+    .job-title {
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    body.dark-mode .job-title {
+        color: #f3f4f6;
+    }
+
+    .company-name {
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+
+    body.dark-mode .company-name {
+        color: #d1d5db;
+    }
+
+    .applied-date {
+        color: #9ca3af;
+        font-size: 0.9rem;
+    }
+
+    body.dark-mode .applied-date {
+        color: #9ca3af;
+    }
+
+    /* Status Badge */
+    .status-badge {
+        display: inline-block !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        white-space: nowrap !important;
+    }
+
+    .badge-applied {
+        background-color: #6b7280 !important;
+        color: white !important;
+    }
+
+    .badge-shortlisted {
+        background-color: #3b82f6 !important;
+        color: white !important;
+    }
+
+    .badge-l1 {
+        background-color: #f97316 !important;
+        color: white !important;
+    }
+
+    .badge-technical {
+        background-color: #06b6d4 !important;
+        color: white !important;
+    }
+
+    .badge-hr {
+        background-color: #8b5cf6 !important;
+        color: white !important;
+    }
+
+    .badge-rejected {
+        background-color: #ef4444 !important;
+        color: white !important;
+    }
+
+    .badge-offered {
+        background-color: #10b981 !important;
+        color: white !important;
+    }
+
+    .badge-hold {
+        background-color: #f59e0b !important;
+        color: white !important;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6b7280;
+    }
+
+    body.dark-mode .empty-state {
+        color: #d1d5db;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+        opacity: 0.4;
+    }
+
+    .empty-state-title {
+        font-size: 1.1rem;
+        color: #1f2937;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    body.dark-mode .empty-state-title {
+        color: #f3f4f6;
+    }
+
+    .empty-state-text {
+        color: #9ca3af;
+        margin-bottom: 20px;
+    }
+
+    body.dark-mode .empty-state-text {
+        color: #9ca3af;
+    }
+
+    .empty-state-link {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    body.dark-mode .empty-state-link {
+        color: #60a5fa;
+    }
+
+    .empty-state-link:hover {
+        color: #1f2937;
+    }
+
+    body.dark-mode .empty-state-link:hover {
+        color: #93c5fd;
+    }
+
+    /* Action Buttons */
+    .button-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-top: 40px;
+    }
+
+    .action-button {
+        padding: 14px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #3b82f6;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #2563eb;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    body.dark-mode .btn-primary {
+        background-color: #3b82f6;
+    }
+
+    body.dark-mode .btn-primary:hover {
+        background-color: #60a5fa;
+    }
+
+    .btn-secondary {
+        background-color: #f97316;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #ea580c;
+        box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    }
+
+    body.dark-mode .btn-secondary {
+        background-color: #f97316;
+    }
+
+    body.dark-mode .btn-secondary:hover {
+        background-color: #fb923c;
+    }
+
+    .btn-outline {
+        background-color: white;
+        color: #3b82f6;
+        border: 2px solid #3b82f6;
+    }
+
+    .btn-outline:hover {
+        background-color: #eff6ff;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 20px 15px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-box {
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+
+        .section-header {
+            padding: 16px;
+        }
+
+        .section-body {
+            padding: 16px;
+        }
+
+        .chart-container {
+            height: 280px;
+        }
+
+        .applications-table th,
+        .applications-table td {
+            padding: 12px 8px;
+            font-size: 0.85rem;
+        }
+
+        .button-group {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .action-button {
+            padding: 12px 20px;
+        }
+    }
+
+    /* Toast Notification */
+    .Swal2-container {
+        z-index: 9999;
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 20px;">
+            <div style="text-align: left;">
+                <p style="font-size: 1.8rem; font-weight: 700; margin: 0;">
+                    <span style="color: #6b7280;">Welcome, </span>
+                    <span style="color: #000000;">{{ user.full_name|default:user.email }}</span>
+                </p>
+                <p style="font-size: 0.9rem; color: #9ca3af; margin-top: 6px;">Ready to explore opportunities?</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
     {% if unseen_count > 0 %}
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-        const updates = [
-            {% for app in latest_updates %}
-                {
-                    job: "{{ app.job.title|escapejs }}",
-                    status: "{{ app.get_status_display|escapejs }}"
-                }{% if not forloop.last %},{% endif %}
-            {% endfor %}
-        ];
-        updates.forEach((u, i) => {
-            setTimeout(() => {
-                Toast.fire({
-                    icon: "info",
-                    title: `Status updated: ${u.job} → ${u.status}`
-                });
-            }, i * 3000);
+            const updates = [
+                {% for app in latest_updates %}
+                    {
+                        job: "{{ app.job.title|escapejs }}",
+                        status: "{{ app.get_status_display|escapejs }}"
+                    }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ];
+            updates.forEach((u, i) => {
+                setTimeout(() => {
+                    Toast.fire({
+                        icon: "info",
+                        title: `${u.job}`,
+                        html: `<small>Status: <strong>${u.status}</strong></small>`,
+                        position: 'top-end',
+                        timer: 4000
+                    });
+                }, i * 3000);
+            });
         });
-  });
     </script>
     {% endif %}
 
-    <div class="row mb-4">
-        <div class="col-md-6">
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-label">Total Jobs Available</div>
+            <div class="stat-number">{{ total_jobs }}</div>
+            <div class="stat-description">View and apply to open positions</div>
+        </div>
 
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        Total Jobs Available
-                    </h5>
-                    <p class="card-text fs-3">{{ total_jobs }}
-                    </p>
+        <div class="stat-box stat-2">
+            <div class="stat-label">Applications Submitted</div>
+            <div class="stat-number">{{ jobs_applied }}</div>
+            <div class="stat-description">Track your submitted applications</div>
+        </div>
+
+        <div class="stat-box stat-3">
+            <div class="stat-label">Application Rate</div>
+            <div class="stat-number">
+                {% if total_jobs > 0 %}
+                    {% widthratio jobs_applied total_jobs 100 %}%
+                {% else %}
+                    0%
+                {% endif %}
+            </div>
+            <div class="stat-description">Percentage of jobs applied</div>
+        </div>
+    </div>
+
+    <!-- Charts Section - Two Column Layout -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px;">
+        <!-- Application Status Distribution Pie Chart -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2>Application Status Distribution</h2>
+            </div>
+            <div class="section-body">
+                {% if status_counts %}
+                    <div class="chart-container" style="position: relative; height: 300px; max-width: 300px; margin: 0 auto;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">—</div>
+                        <div class="empty-state-title">No Data Available</div>
+                        <div class="empty-state-text">You haven't applied to any jobs yet.</div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Job Type Distribution Bar Chart -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2>Job Type Distribution</h2>
+            </div>
+            <div class="section-body">
+                {% if chart_data %}
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="jobTypeChart"></canvas>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">—</div>
+                        <div class="empty-state-title">No Data Available</div>
+                        <div class="empty-state-text">There is no job type distribution data at this time.</div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Applications -->
+    <div class="section-card">
+        <div class="section-header">
+            <h2>Your Recent Applications</h2>
+        </div>
+        <div class="section-body">
+            {% if recent_jobs %}
+                <div style="overflow-x: auto;">
+                    <table class="applications-table">
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Company</th>
+                                <th>Status</th>
+                                <th>Applied Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in recent_jobs %}
+                                <tr>
+                                    <td class="job-title">{{ application.job.title }}</td>
+                                    <td class="company-name">{{ application.job.company }}</td>
+                                    <td>
+                                        {% if application.status == 'applied' %}
+                                            <span class="status-badge badge-applied">Applied</span>
+                                        {% elif application.status == 'shortlisted' %}
+                                            <span class="status-badge badge-shortlisted">Shortlisted</span>
+                                        {% elif application.status == 'intervie_1' %}
+                                            <span class="status-badge badge-l1">L1 Cleared</span>
+                                        {% elif application.status == 'interview_technical' %}
+                                            <span class="status-badge badge-technical">Technical Cleared</span>
+                                        {% elif application.status == 'hr_cleared' %}
+                                            <span class="status-badge badge-hr">HR Cleared</span>
+                                        {% elif application.status == 'rejected' %}
+                                            <span class="status-badge badge-rejected">Rejected</span>
+                                        {% elif application.status == 'offered' %}
+                                            <span class="status-badge badge-offered">Offered</span>
+                                        {% elif application.status == 'hold_on' %}
+                                            <span class="status-badge badge-hold">Hold On</span>
+                                        {% else %}
+                                            <span class="status-badge badge-applied">{{ application.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="applied-date">{{ application.applied_at|date:"M d, Y" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">—</div>
+                    <div class="empty-state-title">No Applications Yet</div>
+                    <div class="empty-state-text">You haven't applied to any jobs yet. Start exploring opportunities now.</div>
+                    <a href="{% url 'all_student_jobs' %}" class="empty-state-link">Browse Jobs</a>
+                </div>
+            {% endif %}
         </div>
     </div>
-
-    <div class="col-md-6">
-        <div class="card text-white bg-info mb-3">
-
-            <div class="class-body">
-                <h5 class="card-title">Jobs you have applied</h5>
-                <p class="card-text fs-3">{{ jobs_applied }}</p>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="card shadow mb-4">
-
-        <div class="card-body">
-            <h5 class="title">Job Type Distribution</h5>
-            <canvas id="jobTypeChart" height="120"></canvas>
-        </div>
-
-
-        <a href="{% url 'all_student_jobs' %}" class="btn btn-warning w-100">View all Jobs </a>
-    </div>
-
-    <a href="{% url 'student_applied_jobs' %}">View Your Applied Jobs</a>
 </div>
+
+<!-- Chart.js Library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- Chart Initialization -->
 <script>
-    const ctx = document.getElementById('jobTypeChart').getContext('2d')
-    const jobChart = new Chart(
-        ctx, {
-        type: 'bar',
-        data: {
-            labels: {{ chart_label| safe }},
-    datasets: [{
-        label: 'Application Count',
-        data: {{ chart_data| safe }},
-        backgroundColor: ['pink', 'blue', 'yellow'],
-        borderColor: ['red', 'blue', 'yellow'],
-        borderWidth: 1
-            }]
-        },
-    options: {
-        'responsive': true,
-            'scales': {
-            y: {
-                beginAtZero: true,
-                    precision: 0
-            }
+    let statusChart = null;
+    let jobTypeChart = null;
+    
+    function initializeCharts() {
+        // Detect dark mode
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        const borderColor = isDarkMode ? '#2d2d2d' : '#ffffff';
+        const hoverBorderColor = isDarkMode ? '#3d3d3d' : '#f0f0f0';
+        const legendColor = isDarkMode ? '#a0a9b8' : '#6b7280';
+        
+        // Destroy existing charts if they exist
+        if (statusChart) {
+            statusChart.destroy();
+        }
+        if (jobTypeChart) {
+            jobTypeChart.destroy();
+        }
+        
+        // Application Status Distribution Pie Chart
+        const statusChartElement = document.getElementById('statusChart');
+        if (statusChartElement) {
+            const statusCtx = statusChartElement.getContext('2d');
+            const statusLabels = {{ status_labels|safe }};
+            const statusCounts = {{ status_counts|safe }};
+            
+            const statusColors = {
+                'Applied': '#6b7280',
+                'Shortlisted': '#3b82f6',
+                'L1 Cleared': '#f97316',
+                'Technical Cleared': '#06b6d4',
+                'HR Cleared': '#8b5cf6',
+                'Rejected': '#ef4444',
+                'Offered': '#10b981',
+                'On Hold': '#f59e0b'
+            };
+            
+            const pieColors = statusLabels.map(label => statusColors[label] || '#6b7280');
+            
+            statusChart = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: statusLabels,
+                    datasets: [{
+                        data: statusCounts,
+                        backgroundColor: pieColors,
+                        borderColor: borderColor,
+                        borderWidth: 2,
+                        hoverBorderColor: hoverBorderColor
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 12,
+                                    weight: '500'
+                                },
+                                color: legendColor,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            padding: 12,
+                            titleFont: {
+                                size: 13,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + ' application(s)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Job Type Distribution Bar Chart
+        const chartElement = document.getElementById('jobTypeChart');
+        if (chartElement) {
+            const ctx = chartElement.getContext('2d');
+            const chartData = {{ chart_data|safe }};
+            const barColors = ['#3b82f6', '#10b981', '#f97316', '#06b6d4', '#8b5cf6'];
+            
+            jobTypeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: {{ chart_label|safe }},
+                    datasets: [{
+                        label: 'Applications',
+                        data: chartData,
+                        backgroundColor: barColors.slice(0, chartData.length),
+                        borderRadius: 6,
+                        borderSkipped: false,
+                        barThickness: 50,
+                        hoverBackgroundColor: '#2563eb'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                color: '#9ca3af',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#6b7280',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
         }
     }
+    
+    // Initialize charts on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        initializeCharts();
+        
+        // Watch for dark mode toggle and reinitialize charts
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', function () {
+                setTimeout(initializeCharts, 100);
+            });
+        }
     });
 </script>
 

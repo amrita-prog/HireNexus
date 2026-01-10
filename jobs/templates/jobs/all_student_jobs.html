@@ -2,6 +2,138 @@
 {% block title %} All Jobs {% endblock %}
 
 {% block content %}
+<style>
+    .container {
+        color: var(--text-primary);
+        margin: 0 auto;
+    }
+
+    h2 {
+        color: var(--text-primary);
+        margin: 2rem 0;
+    }
+
+    .table {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+        border-color: var(--border-color) !important;
+    }
+
+    .table-dark {
+        background: #3b82f6 !important;
+        color: white !important;
+    }
+
+    .table thead {
+        background: #3b82f6 !important;
+    }
+
+    .table thead th {
+        background: #3b82f6 !important;
+        color: white !important;
+        border-color: #3b82f6 !important;
+        font-weight: 600;
+    }
+
+    .table tbody td {
+        border-color: var(--border-color) !important;
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary) !important;
+        padding: 12px;
+    }
+
+    .table tbody tr {
+        background: var(--bg-secondary) !important;
+    }
+
+    .table tbody tr:hover {
+        background: rgba(59, 130, 246, 0.1) !important;
+    }
+
+    .btn-warning {
+        background: #10b981 !important;
+        border-color: #10b981 !important;
+        color: white !important;
+        font-weight: 600 !important;
+    }
+
+    .btn-warning:hover {
+        background: #059669 !important;
+        border-color: #059669 !important;
+        color: white !important;
+    }
+
+    .text-success {
+        color: #3b82f6 !important;
+    }
+
+    .dataTables_wrapper {
+        color: var(--text-primary) !important;
+    }
+
+    .dataTables_length,
+    .dataTables_filter {
+        color: var(--text-primary) !important;
+    }
+
+    .dataTables_length label,
+    .dataTables_filter label {
+        color: var(--text-primary) !important;
+    }
+
+    .dataTables_filter input {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+        border: 1px solid var(--border-color) !important;
+    }
+
+    .dataTables_filter input::placeholder {
+        color: var(--text-secondary) !important;
+    }
+
+    .dataTables_filter input:focus {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+        border-color: #3b82f6 !important;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    }
+
+    .dataTables_info {
+        color: var(--text-secondary) !important;
+    }
+
+    .dataTables_paginate .paginate_button {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+    }
+
+    .dataTables_paginate .paginate_button:hover {
+        background: #3b82f6 !important;
+        color: white !important;
+        border-color: #3b82f6 !important;
+    }
+
+    .dataTables_paginate .paginate_button.current {
+        background: #3b82f6 !important;
+        color: white !important;
+        border-color: #3b82f6 !important;
+    }
+
+    .dt-buttons .btn {
+        background: #6b7280 !important;
+        border-color: #6b7280 !important;
+        color: white !important;
+        margin-right: 5px;
+    }
+
+    .dt-buttons .btn:hover {
+        background: #4b5563 !important;
+        border-color: #4b5563 !important;
+    }
+</style>
+
     <div class="container mt-5">
         {% if user.is_authenticated and user.roles == 'student' %}
         <h2 class="mb-4 text-success">All Opening for students</h2>

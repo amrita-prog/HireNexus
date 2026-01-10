@@ -1,84 +1,258 @@
 {% extends 'accounts/base.html' %}
-{% block title %} Recruiter Dashboard {% endblock %}
+{% block title %}Recruiter Dashboard{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4 text-primary">Welcome, {{ request.user.full_name }}</h2>
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card shadow text-center">
-                <div class="card-body">
-                    <h5>Total Jobs</h5>
-                    <h2>{{ total_jobs }}</h2>
+
+<style>
+    body {
+        background: var(--bg-primary);
+    }
+
+    .sidebar {
+        background: #1f2a44;
+        min-height: 100vh;
+        color: #cbd5e1;
+    }
+
+    body.dark-mode .sidebar {
+        background: #0f1419;
+    }
+
+    .sidebar a {
+        color: #cbd5e1;
+        text-decoration: none;
+        display: block;
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar a.active,
+    .sidebar a:hover {
+        background: #3b82f6;
+        color: #fff;
+    }
+
+    .topbar {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px 20px;
+        color: var(--text-primary);
+    }
+
+    .card {
+        border: none;
+        border-radius: 14px;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        box-shadow: 0 10px 25px var(--shadow-color);
+    }
+
+    .stat-number {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .stat-label {
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+
+    .recent-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .recent-item:last-child {
+        border-bottom: none;
+    }
+
+    .badge-soft {
+        background: #e0e7ff;
+        color: #4338ca;
+        font-size: 12px;
+    }
+
+    body.dark-mode .badge-soft {
+        background: rgba(59, 130, 246, 0.2);
+        color: #93c5fd;
+    }
+
+    .text-muted {
+        color: var(--text-secondary) !important;
+    }
+
+    .fw-semibold {
+        color: var(--text-primary);
+    }
+
+    .text-primary {
+        color: #3b82f6 !important;
+    }
+
+    .text-success {
+        color: #10b981 !important;
+    }
+
+    .text-danger {
+        color: #ef4444 !important;
+    }
+
+    small {
+        color: var(--text-secondary);
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- ================= SIDEBAR ================= -->
+        <div class="col-md-2 sidebar p-3">
+            <h5 class="text-white mb-4">Recruiter Panel</h5>
+
+            <a href="#" class="active">Dashboard</a>
+            <a href="{% url 'recruiter_jobs' %}">Jobs</a>
+            <a href="#">Applications</a>
+            <a href="#">Reports</a>
+            <a href="#">Settings</a>
+
+            <hr class="text-secondary">
+
+            <a href="{% url 'logout' %}" class="text-danger">Logout</a>
+        </div>
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <div class="col-md-10 p-0">
+
+            <!-- ================= TOP BAR ================= -->
+            <div class="topbar d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Dashboard</h5>
+                <span class="text-muted">Welcome, {{ request.user.full_name }}</span>
+            </div>
+
+            <div class="p-4">
+
+                <!-- ================= STATS ================= -->
+                <div class="row g-4 mb-4">
+
+                    <div class="col-md-4">
+                        <div class="card p-3">
+                            <div class="stat-label">Total Jobs</div>
+                            <div class="stat-number text-primary">{{ total_jobs }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card p-3">
+                            <div class="stat-label">Total Applications</div>
+                            <div class="stat-number text-success">{{ total_applications }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card p-3">
+                            <div class="stat-label">Most Applied Job</div>
+                            <div class="fw-semibold">{{ most_applied_jobs.title }}</div>
+                            <small class="text-muted">
+                                {{ most_applied_jobs.application_set.count }} applications
+                            </small>
+                        </div>
+                    </div>
+
                 </div>
+
+                <!-- ================= GRID ================= -->
+                <div class="row g-4">
+
+                    <!-- ====== APPLICATION CHART (LEFT) ====== -->
+                    <div class="col-md-8">
+                        <div class="card p-4">
+                            <h6 class="fw-semibold mb-3">Applications Per Job</h6>
+
+                            {% if chart_data %}
+                                <canvas id="jobChart" height="300"></canvas>
+                            {% else %}
+                                <div class="text-center text-muted py-5">
+                                    No application data available
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- ====== RECENT APPLICATIONS (RIGHT) ====== -->
+                    <div class="col-md-4">
+                        <div class="card p-4">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h6 class="fw-semibold mb-0">Recent Applications</h6>
+                                <a href="#" class="small">View all</a>
+                            </div>
+
+                            {% for app in recent_applications %}
+                                <div class="recent-item">
+                                    <div>
+                                        <div class="fw-semibold">{{ app.job.title }}</div>
+                                        <small class="text-muted">
+                                            {{ app.user.full_name }}
+                                        </small>
+                                    </div>
+                                    <span class="badge badge-soft">New</span>
+                                </div>
+                            {% empty %}
+                                <p class="text-muted text-center mt-4">
+                                    No recent applications
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </div>
-
-
-        <div class="col-md-3">
-            <div class="card shadow text-center">
-                <div class="card-body">
-                    <h5>Total Application</h5>
-                    <h2>{{ total_applications }}</h2>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="col-md-3">
-            <div class="card shadow text-center">
-                <div class="card-body">
-                    <h5>Most Applied Jobs</h5>
-                    <p><strong>{{ most_applied_jobs.title }}</strong> - {{ most_applied_jobs.application_set.count }} Applications</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="d-flex justify-content-end mb-3">
-            <a href="{% url 'job_create' %}" class="btn btn-success btn-sm me-4">Post a New Job</a>
-            <a href="{% url 'recruiter_jobs' %}" class="btn btn-warning btn-sm me-2">View Your Posted Jobs</a>
-        </div>
-
-        
-
     </div>
 </div>
 
-<div class="card shadow mb-4">
-    <div class="card-body">
-        <h5 class="mb-3">
-            Applications Per Job 
-        </h5>
-        <canvas id="jobChart"></canvas>
-    </div>
-</div>
-
+<!-- ================= CHART ================= -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('jobChart').getContext('2d')
-    const jobChart = new Chart(
-        ctx,{
-            type:'bar',
-            data:{
+    const chartEl = document.getElementById('jobChart');
+
+    if (chartEl) {
+        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+        const chartData = {{ chart_data|safe }};
+        
+        new Chart(chartEl, {
+            type: 'bar',
+            data: {
                 labels: {{ chart_label|safe }},
-                datasets : [{
-                    label: 'Application Count',
-                    data: {{ chart_data|safe }},
-                    backgroundColor: ['pink','blue','green'],
-                    borderColor: 'black',
-                    borderWidth: 1
-            }]
-        },
-        options: {
-            'responsive': true,
-            'scales':{
-                y:{
-                    beginAtZero: true,
-                    precision:0
+                datasets: [{
+                    data: chartData,
+                    backgroundColor: colors.slice(0, chartData.length),
+                    borderRadius: 8,
+                    barThickness: 80
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0 }
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 </script>
 
 {% endblock %}

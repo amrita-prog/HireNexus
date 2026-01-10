@@ -2,46 +2,275 @@
 {% block title %} Your applied Jobs {% endblock %}
 {% block content %}
 
-<h3>Your Applied Jobs</h3>
-<table class="table">
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
 
-    <thead>
-        <tr>
-            <th>Job Title</th>
-            <th>Company</th>
-            <th>Status</th>
-            <th>Updated On</th>
-        </tr>
-    </thead>
+    h3 {
+        color: var(--text-primary);
+        margin: 2rem 1rem;
+    }
 
-    <tbody>
-        {% for app in applications %}
-        <tr>
-            <td> {{ app.job.title }} </td>
-            <td> {{ app.job.company }}</td>
-            <td>
-                <span class="badge 
-                {% if app.status == 'selected' %}bg-sucsess
-                {% elif app.status == 'rejected' %}bg-danger
-                {% elif app.status == 'shortlisted' %}bg-primary
-                {% elif app.status == 'rejected' %}btn-outline-warning
-                {% else %}bg-secondary 
-                {% endif %}
-                ">
+    .table {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+        border-color: var(--border-color) !important;
+        margin: 0 1rem;
+    }
 
-                {{ app.get_status_display }}
-                </span>
+    .table thead {
+        background: #3b82f6 !important;
+        color: white !important;
+    }
 
-                {% if app.status_notified and app.status != 'applied' %}
-                <span class="badge bg-warning text-dark">New!</span>
-                {% endif %}
-            </td>
+    .table thead th {
+        color: white !important;
+        border-color: #3b82f6 !important;
+        font-weight: 600;
+        background: #3b82f6 !important;
+    }
 
-            <td>{{ app.applied_at|date:"d M Y, H: i"}}</td>
-        </tr>
+    .table tbody tr {
+        border-color: var(--border-color) !important;
+        background: var(--bg-secondary) !important;
+    }
 
-        {% endfor %}
-    </tbody>
-</table>
+    .table tbody td {
+        color: var(--text-primary) !important;
+        border-color: var(--border-color) !important;
+        vertical-align: middle !important;
+        padding: 12px !important;
+        background: var(--bg-secondary) !important;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        background: var(--bg-secondary) !important;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(even) {
+        background: var(--bg-secondary) !important;
+    }
+
+    .table tbody tr:hover {
+        background: rgba(59, 130, 246, 0.15) !important;
+    }
+
+    .badge {
+        padding: 8px 14px !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        white-space: nowrap !important;
+        text-decoration: none !important;
+    }
+
+    .badge.bg-success {
+        background: #10b981 !important;
+        color: white !important;
+    }
+
+    .badge.bg-danger {
+        background: #ef4444 !important;
+        color: white !important;
+    }
+
+    .badge.bg-primary {
+        background: #3b82f6 !important;
+        color: white !important;
+    }
+
+    .badge.bg-secondary {
+        background: #6b7280 !important;
+        color: white !important;
+    }
+
+    .badge.bg-warning {
+        background: #f97316 !important;
+        color: white !important;
+    }
+
+    .badge.bg-info {
+        background: #06b6d4 !important;
+        color: white !important;
+    }
+
+    /* Status-specific badge colors */
+    .status-applied {
+        background: #6b7280 !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+
+    .status-shortlisted {
+        background: #3b82f6 !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+
+    .status-l1 {
+        background: #f97316 !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+
+    .status-technical {
+        background: #06b6d4 !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+
+    .status-hr {
+        background: #8b5cf6 !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+
+    .status-rejected {
+        background: #ef4444 !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* Additional status variants */
+    .status-l1-cleared,
+    [class*="l1"] {
+        background: #f97316 !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+
+    .status-technical-cleared,
+    [class*="technical"] {
+        background: #06b6d4 !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* Catch-all for any text in status cell that doesn't have badge class */
+    .table tbody td span:not([class]) {
+        background: #6b7280 !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+
+    .status-offered {
+        background: #10b981 !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+
+    .status-hold {
+        background: #f59e0b !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+
+    .status-selected {
+        background: #10b981 !important;
+        color: white !important;
+        padding: 8px 14px !important;
+        border-radius: 6px !important;
+        display: inline-block !important;
+        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+    }
+</style>
+
+<div class="container">
+    <h3>Your Applied Jobs</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Status</th>
+                <th>Updated On</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td>{{ app.job.title }}</td>
+                <td>{{ app.job.company }}</td>
+                <td>
+                    {% if app.status == 'applied' %}
+                        <span class="badge status-applied">{{ app.get_status_display }}</span>
+                    {% elif app.status == 'shortlisted' %}
+                        <span class="badge status-shortlisted">{{ app.get_status_display }}</span>
+                    {% elif app.status == 'l1' %}
+                        <span class="badge status-l1">{{ app.get_status_display }}</span>
+                    {% elif app.status == 'technical' %}
+                        <span class="badge status-technical">{{ app.get_status_display }}</span>
+                    {% elif app.status == 'hr' %}
+                        <span class="badge status-hr">{{ app.get_status_display }}</span>
+                    {% elif app.status == 'rejected' %}
+                        <span class="badge status-rejected">{{ app.get_status_display }}</span>
+                    {% elif app.status == 'offered' %}
+                        <span class="badge status-offered">{{ app.get_status_display }}</span>
+                    {% elif app.status == 'hold' %}
+                        <span class="badge status-hold">{{ app.get_status_display }}</span>
+                    {% elif app.status == 'selected' %}
+                        <span class="badge status-offered">{{ app.get_status_display }}</span>
+                    {% else %}
+                        <span class="badge status-applied" style="background: #6b7280 !important;">{{ app.get_status_display }}</span>
+                    {% endif %}
+                    {% if app.status_notified and app.status != 'applied' %}
+                    <span class="badge bg-warning" style="margin-left: 8px;">New!</span>
+                    {% endif %}
+                </td>
+                <td>{{ app.applied_at|date:"d M Y, H: i"}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}

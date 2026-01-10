@@ -3,6 +3,86 @@
 {% load static %}
 
 {% block content %}
+<style>
+    .card {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    .form-label {
+        color: var(--text-primary);
+    }
+
+    .form-control {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .form-control:focus {
+        background: var(--bg-secondary);
+        border-color: #3b82f6;
+        color: var(--text-primary);
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+    }
+
+    .form-text {
+        color: var(--text-secondary);
+    }
+
+    .bg-light {
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+    }
+
+    .border {
+        border-color: var(--border-color) !important;
+    }
+
+    .text-muted {
+        color: var(--text-secondary) !important;
+    }
+
+    .fw-semibold {
+        color: var(--text-primary);
+    }
+
+    h3, h6 {
+        color: var(--text-primary);
+    }
+
+    .btn-outline-primary {
+        color: #3b82f6;
+        border-color: #3b82f6;
+    }
+
+    .btn-outline-primary:hover {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        border-color: #3b82f6;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+        border-color: #2563eb;
+    }
+
+    .alert {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    hr {
+        border-color: var(--border-color);
+    }
+</style>
+
 <div class="container py-5" style="max-width: 900px;">
   <div class="row justify-content-center">
     <div class="col-12">

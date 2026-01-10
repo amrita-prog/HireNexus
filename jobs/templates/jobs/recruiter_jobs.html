@@ -2,6 +2,152 @@
 {% block title %} Your posted jobs {% endblock %}
 
 {% block content %}
+<style>
+    .container {
+        color: var(--text-primary);
+    }
+
+    h2, h3 {
+        color: var(--text-primary);
+    }
+
+    .table {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    .table-dark {
+        background: #3b82f6 !important;
+        color: white !important;
+    }
+
+    .table thead th {
+        background: #3b82f6;
+        color: white;
+        border-color: var(--border-color);
+    }
+
+    .table tbody td {
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .table tbody tr:hover {
+        background: rgba(59, 130, 246, 0.1);
+    }
+
+    .btn-warning {
+        background: #10b981;
+        border-color: #10b981;
+        color: white;
+        font-weight: 600;
+    }
+
+    .btn-warning:hover {
+        background: #059669;
+        border-color: #059669;
+        color: white;
+    }
+
+    .btn-danger {
+        background: #ef4444;
+        border-color: #ef4444;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+        border-color: #dc2626;
+        color: white;
+    }
+
+    .text-success {
+        color: #3b82f6 !important;
+    }
+
+    .text-info {
+        color: #06b6d4 !important;
+    }
+
+    .alert {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .alert-warning {
+        background: rgba(249, 115, 22, 0.1);
+        border-color: #f97316;
+    }
+
+    a {
+        color: #3b82f6;
+    }
+
+    a:hover {
+        color: #2563eb;
+    }
+
+    .dataTables_wrapper {
+        color: var(--text-primary) !important;
+    }
+
+    .dataTables_length,
+    .dataTables_filter {
+        color: var(--text-primary) !important;
+    }
+
+    .dataTables_length label,
+    .dataTables_filter label {
+        color: var(--text-primary) !important;
+    }
+
+    .dataTables_filter input {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+        border: 1px solid var(--border-color) !important;
+    }
+
+    .dataTables_filter input::placeholder {
+        color: var(--text-secondary) !important;
+    }
+
+    .dataTables_filter input:focus {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+        border-color: #3b82f6 !important;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    }
+
+    .dataTables_info {
+        color: var(--text-secondary) !important;
+    }
+
+    body.dark-mode .dataTables_wrapper {
+        color: var(--text-primary);
+    }
+
+    body.dark-mode .dataTables_length,
+    body.dark-mode .dataTables_filter,
+    body.dark-mode .dataTables_info {
+        color: var(--text-primary);
+    }
+
+    body.dark-mode .dataTables_paginate .paginate_button {
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+    }
+
+    body.dark-mode .dataTables_paginate .paginate_button.current,
+    body.dark-mode .dataTables_paginate .paginate_button:hover {
+        background: #3b82f6;
+        color: white;
+    }
+</style>
+
 {% if jobs %}
     <div class="container mt-5">
         <h2 class="mb-4 text-success">Your Posted Jobs</h2>
