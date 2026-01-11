@@ -4,92 +4,206 @@
 {% block content %}
 
 <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     body {
-        background: var(--bg-primary);
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
     }
 
-    .sidebar {
-        background: #1f2a44;
-        min-height: 100vh;
-        color: #cbd5e1;
+    body.dark-mode {
+        background-color: #1a1a1a;
+        color: #f3f4f6;
     }
 
-    body.dark-mode .sidebar {
-        background: #0f1419;
+
+
+    .dashboard-wrapper {
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
     }
 
-    .sidebar a {
-        color: #cbd5e1;
-        text-decoration: none;
-        display: block;
-        padding: 12px 18px;
+    /* Header */
+    .dashboard-header {
+        margin-bottom: 40px;
+        border-bottom: 2px solid #e8eaed;
+        padding-bottom: 20px;
+    }
+
+    body.dark-mode .dashboard-header {
+        border-bottom-color: #404040;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+        color: #1f2937;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    body.dark-mode .dashboard-header h1 {
+        color: #f3f4f6;
+    }
+
+    .dashboard-header p {
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+
+    body.dark-mode .dashboard-header p {
+        color: #d1d5db;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+
+    .stat-box {
+        background: white;
         border-radius: 8px;
-        font-size: 14px;
+        padding: 28px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border-left: 5px solid #3b82f6;
         transition: all 0.3s ease;
     }
 
-    .sidebar a.active,
-    .sidebar a:hover {
-        background: #3b82f6;
-        color: #fff;
+    body.dark-mode .stat-box {
+        background: #2d2d2d;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
 
-    .topbar {
-        background: var(--bg-secondary);
-        border-bottom: 1px solid var(--border-color);
-        padding: 12px 20px;
-        color: var(--text-primary);
+    .stat-box:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-4px);
     }
 
-    .card {
-        border: none;
-        border-radius: 14px;
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-        box-shadow: 0 10px 25px var(--shadow-color);
+    body.dark-mode .stat-box:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     }
 
-    .stat-number {
-        font-size: 26px;
-        font-weight: 700;
-        color: var(--text-primary);
+    .stat-box.stat-2 {
+        border-left-color: #10b981;
+    }
+
+    .stat-box.stat-3 {
+        border-left-color: #f59e0b;
     }
 
     .stat-label {
-        font-size: 13px;
-        color: var(--text-secondary);
+        font-size: 0.85rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        margin-bottom: 12px;
     }
 
-    .recent-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid var(--border-color);
-        color: var(--text-primary);
+    body.dark-mode .stat-label {
+        color: #d1d5db;
     }
 
-    .recent-item:last-child {
-        border-bottom: none;
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
     }
 
-    .badge-soft {
-        background: #e0e7ff;
-        color: #4338ca;
-        font-size: 12px;
+    body.dark-mode .stat-number {
+        color: #f3f4f6;
     }
 
-    body.dark-mode .badge-soft {
-        background: rgba(59, 130, 246, 0.2);
-        color: #93c5fd;
+    .stat-description {
+        font-size: 0.85rem;
+        color: #9ca3af;
+    }
+
+    body.dark-mode .stat-description {
+        color: #9ca3af;
+    }
+
+    /* Section Container */
+    .section-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        margin-bottom: 40px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    body.dark-mode .section-card {
+        background: #2d2d2d;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .section-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .section-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-header {
+        padding: 24px;
+        border-bottom: 1px solid #e5e7eb;
+        background: linear-gradient(135deg, #f0f9ff 0%, #f0f5ff 100%);
+        border-left: 5px solid #3b82f6;
+    }
+
+    body.dark-mode .section-header {
+        border-bottom-color: #404040;
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    }
+
+    .section-header h2 {
+        font-size: 1.3rem;
+        color: #1f2937;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    body.dark-mode .section-header h2 {
+        color: #f3f4f6;
+    }
+
+    .section-body {
+        padding: 24px;
+    }
+
+    body.dark-mode .section-body {
+        background: #2d2d2d;
+    }
+
+    /* Chart Container */
+    .chart-container {
+        position: relative;
+        height: 320px;
+        margin: 0;
     }
 
     .text-muted {
-        color: var(--text-secondary) !important;
+        color: #6b7280 !important;
+    }
+
+    body.dark-mode .text-muted {
+        color: #d1d5db !important;
     }
 
     .fw-semibold {
         color: var(--text-primary);
+        font-weight: 600;
     }
 
     .text-primary {
@@ -107,112 +221,252 @@
     small {
         color: var(--text-secondary);
     }
+
+    /* Recent Applications Section */
+    .recent-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 0;
+        border-bottom: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+    }
+
+    body.dark-mode .recent-item {
+        border-bottom-color: #404040;
+    }
+
+    .recent-item:hover {
+        background-color: #f9fafb;
+        padding-left: 12px;
+        padding-right: 12px;
+        margin-left: -12px;
+        margin-right: -12px;
+        border-radius: 6px;
+    }
+
+    body.dark-mode .recent-item:hover {
+        background-color: #383838;
+    }
+
+    .recent-item:last-child {
+        border-bottom: none;
+    }
+
+    .badge-soft {
+        background: #e0e7ff;
+        color: #4338ca;
+        font-size: 12px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    body.dark-mode .badge-soft {
+        background: rgba(59, 130, 246, 0.2);
+        color: #93c5fd;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6b7280;
+    }
+
+    body.dark-mode .empty-state {
+        color: #d1d5db;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+        opacity: 0.4;
+    }
+
+    .empty-state-title {
+        font-size: 1.1rem;
+        color: #1f2937;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    body.dark-mode .empty-state-title {
+        color: #f3f4f6;
+    }
+
+    .empty-state-text {
+        color: #9ca3af;
+        margin-bottom: 20px;
+    }
+
+    body.dark-mode .empty-state-text {
+        color: #9ca3af;
+    }
+
+    .link-hover {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    .link-hover:hover {
+        color: #1f2937;
+    }
+
+    body.dark-mode .link-hover:hover {
+        color: #93c5fd;
+    }
+
+    /* Two Column Layout */
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+    }
+
+    @media (max-width: 1024px) {
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Post Job Button */
+    .btn-post-job {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white !important;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-post-job:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        transform: translateY(-2px);
+    }
+
+    body.dark-mode .btn-post-job {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+
+    body.dark-mode .btn-post-job:hover {
+        background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    }
+
+    .dashboard-header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .dashboard-header-content {
+        flex: 1;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-header-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-post-job {
+            width: 100%;
+            justify-content: center;
+        }
+    }
 </style>
 
-<div class="container-fluid">
-    <div class="row">
+<div class="dashboard-wrapper">
+    <!-- Header with Post Job Button -->
+    <div class="dashboard-header-container">
+        <div class="dashboard-header-content">
+            <h1>Dashboard</h1>
+            <p>Welcome back, {{ request.user.full_name }}! Track your recruiting progress.</p>
+        </div>
+        <a href="{% url 'job_create' %}" class="btn-post-job">
+            <span>+</span> Post a New Job
+        </a>
+    </div>
 
-        <!-- ================= SIDEBAR ================= -->
-        <div class="col-md-2 sidebar p-3">
-            <h5 class="text-white mb-4">Recruiter Panel</h5>
-
-            <a href="#" class="active">Dashboard</a>
-            <a href="{% url 'recruiter_jobs' %}">Jobs</a>
-            <a href="#">Applications</a>
-            <a href="#">Reports</a>
-            <a href="#">Settings</a>
-
-            <hr class="text-secondary">
-
-            <a href="{% url 'logout' %}" class="text-danger">Logout</a>
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-label">Total Jobs Posted</div>
+            <div class="stat-number">{{ total_jobs }}</div>
+            <div class="stat-description">Active job openings</div>
         </div>
 
-        <!-- ================= MAIN CONTENT ================= -->
-        <div class="col-md-10 p-0">
+        <div class="stat-box stat-2">
+            <div class="stat-label">Total Applications</div>
+            <div class="stat-number">{{ total_applications }}</div>
+            <div class="stat-description">Received applications</div>
+        </div>
 
-            <!-- ================= TOP BAR ================= -->
-            <div class="topbar d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Dashboard</h5>
-                <span class="text-muted">Welcome, {{ request.user.full_name }}</span>
+        <div class="stat-box stat-3">
+            <div class="stat-label">Most Applied Job</div>
+            <div class="fw-semibold" style="font-size: 1.3rem; margin-bottom: 8px;">{{ most_applied_jobs.title }}</div>
+            <div class="stat-description">{{ most_applied_jobs.application_set.count }} applications</div>
+        </div>
+    </div>
+
+    <!-- Charts Section - Two Column Layout -->
+    <div class="grid-2">
+        <!-- Applications Per Job Chart -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2>Applications Per Job</h2>
             </div>
-
-            <div class="p-4">
-
-                <!-- ================= STATS ================= -->
-                <div class="row g-4 mb-4">
-
-                    <div class="col-md-4">
-                        <div class="card p-3">
-                            <div class="stat-label">Total Jobs</div>
-                            <div class="stat-number text-primary">{{ total_jobs }}</div>
-                        </div>
+            <div class="section-body">
+                {% if chart_data %}
+                    <div class="chart-container">
+                        <canvas id="jobChart"></canvas>
                     </div>
-
-                    <div class="col-md-4">
-                        <div class="card p-3">
-                            <div class="stat-label">Total Applications</div>
-                            <div class="stat-number text-success">{{ total_applications }}</div>
-                        </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">—</div>
+                        <div class="empty-state-title">No Data Available</div>
+                        <div class="empty-state-text">No applications have been received yet.</div>
                     </div>
+                {% endif %}
+            </div>
+        </div>
 
-                    <div class="col-md-4">
-                        <div class="card p-3">
-                            <div class="stat-label">Most Applied Job</div>
-                            <div class="fw-semibold">{{ most_applied_jobs.title }}</div>
-                            <small class="text-muted">
-                                {{ most_applied_jobs.application_set.count }} applications
-                            </small>
-                        </div>
-                    </div>
-
+        <!-- Recent Applications Section -->
+        <div class="section-card">
+            <div class="section-header">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 0;">
+                    <h2 style="margin: 0;">Recent Applications</h2>
+                    <a href="{% url 'recruiter_applications' %}" class="link-hover">View all</a>
                 </div>
-
-                <!-- ================= GRID ================= -->
-                <div class="row g-4">
-
-                    <!-- ====== APPLICATION CHART (LEFT) ====== -->
-                    <div class="col-md-8">
-                        <div class="card p-4">
-                            <h6 class="fw-semibold mb-3">Applications Per Job</h6>
-
-                            {% if chart_data %}
-                                <canvas id="jobChart" height="300"></canvas>
-                            {% else %}
-                                <div class="text-center text-muted py-5">
-                                    No application data available
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <!-- ====== RECENT APPLICATIONS (RIGHT) ====== -->
-                    <div class="col-md-4">
-                        <div class="card p-4">
-                            <div class="d-flex justify-content-between mb-3">
-                                <h6 class="fw-semibold mb-0">Recent Applications</h6>
-                                <a href="#" class="small">View all</a>
+            </div>
+            <div class="section-body">
+                {% if recent_applications %}
+                    {% for app in recent_applications %}
+                        <div class="recent-item">
+                            <div>
+                                <div class="fw-semibold">{{ app.job.title }}</div>
+                                <small class="text-muted">{{ app.user.full_name }}</small>
                             </div>
-
-                            {% for app in recent_applications %}
-                                <div class="recent-item">
-                                    <div>
-                                        <div class="fw-semibold">{{ app.job.title }}</div>
-                                        <small class="text-muted">
-                                            {{ app.user.full_name }}
-                                        </small>
-                                    </div>
-                                    <span class="badge badge-soft">New</span>
-                                </div>
-                            {% empty %}
-                                <p class="text-muted text-center mt-4">
-                                    No recent applications
-                                </p>
-                            {% endfor %}
+                            <span class="badge badge-soft">New</span>
                         </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state" style="padding: 40px 20px;">
+                        <div class="empty-state-icon">—</div>
+                        <div class="empty-state-title">No Applications</div>
+                        <div class="empty-state-text">No recent applications yet</div>
                     </div>
-
-                </div>
-
+                {% endif %}
             </div>
         </div>
     </div>

@@ -245,20 +245,18 @@
                         <span class="badge status-applied">{{ app.get_status_display }}</span>
                     {% elif app.status == 'shortlisted' %}
                         <span class="badge status-shortlisted">{{ app.get_status_display }}</span>
-                    {% elif app.status == 'l1' %}
+                    {% elif app.status == 'intervie_1' %}
                         <span class="badge status-l1">{{ app.get_status_display }}</span>
-                    {% elif app.status == 'technical' %}
+                    {% elif app.status == 'interview_technical' %}
                         <span class="badge status-technical">{{ app.get_status_display }}</span>
-                    {% elif app.status == 'hr' %}
+                    {% elif app.status == 'hr_cleared' %}
                         <span class="badge status-hr">{{ app.get_status_display }}</span>
                     {% elif app.status == 'rejected' %}
                         <span class="badge status-rejected">{{ app.get_status_display }}</span>
                     {% elif app.status == 'offered' %}
                         <span class="badge status-offered">{{ app.get_status_display }}</span>
-                    {% elif app.status == 'hold' %}
+                    {% elif app.status == 'hold_on' %}
                         <span class="badge status-hold">{{ app.get_status_display }}</span>
-                    {% elif app.status == 'selected' %}
-                        <span class="badge status-offered">{{ app.get_status_display }}</span>
                     {% else %}
                         <span class="badge status-applied" style="background: #6b7280 !important;">{{ app.get_status_display }}</span>
                     {% endif %}

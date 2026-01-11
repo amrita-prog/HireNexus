@@ -2,6 +2,55 @@
 {% block title %} Post a new job {% endblock %}
 
 {% block content %}
+<style>
+    .card {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+    }
+
+    .form-label {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .form-control,
+    .form-select {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+    }
+
+    .form-control::placeholder {
+        color: var(--text-secondary);
+    }
+
+    .btn-success {
+        background: #10b981 !important;
+        border-color: #10b981 !important;
+        color: white !important;
+        font-weight: 600;
+    }
+
+    .btn-success:hover {
+        background: #059669 !important;
+        border-color: #059669 !important;
+        color: white !important;
+    }
+
+    h2 {
+        color: #3b82f6 !important;
+    }
+</style>
+
 <div class="container mt-5 col-md-8">
     <div class="card p-4 shadow-sm">
         <h2 class="mb-4 text-primary">Edit Job</h2>

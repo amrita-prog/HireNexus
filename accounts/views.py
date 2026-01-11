@@ -6,7 +6,7 @@ from django.contrib import messages
 from .models import CustomUser
 from django.contrib.auth.decorators import login_required
 from jobs.models import Job, Application
-from django.db.models import Count
+from django.db.models import Count, Q
 
 
 def student_signup(request):
@@ -81,6 +81,10 @@ def recruiter_dashboard(request):
         jobs.annotate(app_count=Count('application'))
         .order_by('-app_count').first()
     )
+    
+    # Get recent applications for the recruiter
+    recent_applications = Application.objects.filter(job__posted_by=user).select_related('job', 'student').order_by('-applied_at')[:5]
+    
     chart_label = [item['job_type'] for item in job_type_data]
     chart_data = [item['count'] for item in job_type_data]
 
@@ -90,6 +94,7 @@ def recruiter_dashboard(request):
         'most_applied_jobs': most_applied_jobs,
         'chart_label': chart_label,
         'chart_data': chart_data,
+        'recent_applications': recent_applications,
     })
 
 @login_required
@@ -177,3 +182,105 @@ def edit_profile(request):
     else:
         form = ProfileEditForm(instance=user, user=user)
     return render(request, 'accounts/edit_profile.html', {'form': form})
+
+@login_required
+def recruiter_applications(request):
+    """View all applications for recruiter's jobs"""
+    user = request.user
+    if user.roles != 'recruiter':
+        redirect('student_dashboard')
+    
+    # Get all applications for this recruiter's jobs
+    applications = Application.objects.filter(job__posted_by=user).select_related('job', 'student').order_by('-applied_at')
+    
+    return render(request, 'accounts/recruiter_applications.html', {
+        'applications': applications
+    })
+
+@login_required
+def recruiter_reports(request):
+    """Reports page for recruiter with analytics and insights"""
+    user = request.user
+    if user.roles != 'recruiter':
+        return redirect('student_dashboard')
+    
+    # Get all jobs and applications for this recruiter
+    jobs = Job.objects.filter(posted_by=user)
+    applications = Application.objects.filter(job__posted_by=user).select_related('job', 'student')
+    
+    # 1. Application Funnel Data (Pipeline)
+    status_mapping = {
+        'applied': 'Applied',
+        'shortlisted': 'Shortlisted',
+        'intervie_1': 'L1 Interview',
+        'interview_technical': 'Technical',
+        'hr_cleared': 'HR Cleared',
+        'offered': 'Offered',
+        'rejected': 'Rejected',
+        'hold_on': 'On Hold'
+    }
+    
+    funnel_data = applications.values('status').annotate(count=Count('status')).order_by('status')
+    funnel_labels = [status_mapping.get(item['status'], item['status']) for item in funnel_data]
+    funnel_counts = [item['count'] for item in funnel_data]
+    
+    # Create combined list for easier template iteration
+    funnel_combined = list(zip(funnel_labels, funnel_counts))
+    
+    # 2. Job Performance Data
+    job_performance = jobs.annotate(
+        total_applications=Count('application'),
+        shortlisted_count=Count('application', filter=Q(application__status='shortlisted')),
+        offered_count=Count('application', filter=Q(application__status='offered')),
+        rejected_count=Count('application', filter=Q(application__status='rejected'))
+    ).values('title', 'salary', 'job_type', 'created_at', 'total_applications', 'shortlisted_count', 'offered_count', 'rejected_count')
+    
+    # 3. Filter options
+    date_filter = request.GET.get('date_filter', 'all')
+    job_type_filter = request.GET.get('job_type', 'all')
+    status_filter = request.GET.get('status', 'all')
+    
+    filtered_applications = applications
+    
+    # Apply filters
+    if date_filter == 'this_month':
+        from datetime import datetime
+        current_month = datetime.now().month
+        current_year = datetime.now().year
+        filtered_applications = filtered_applications.filter(applied_at__month=current_month, applied_at__year=current_year)
+    elif date_filter == 'last_3_months':
+        from datetime import datetime, timedelta
+        three_months_ago = datetime.now() - timedelta(days=90)
+        filtered_applications = filtered_applications.filter(applied_at__gte=three_months_ago)
+    
+    if job_type_filter != 'all':
+        filtered_applications = filtered_applications.filter(job__job_type=job_type_filter)
+    
+    if status_filter != 'all':
+        filtered_applications = filtered_applications.filter(status=status_filter)
+    
+    # 6. Detailed Report Table (filtered)
+    detailed_report = filtered_applications.select_related('job', 'student').order_by('-applied_at')
+    
+    # Get unique job types and statuses for filter dropdowns
+    job_types = jobs.values_list('job_type', flat=True).distinct()
+    statuses = applications.values_list('status', flat=True).distinct()
+    
+    # Get max funnel count for width calculation
+    max_funnel_count = max(funnel_counts) if funnel_counts else 1
+    
+    context = {
+        'funnel_combined': funnel_combined,
+        'funnel_labels': funnel_labels,
+        'funnel_counts': funnel_counts,
+        'max_funnel_count': max_funnel_count,
+        'job_performance': job_performance,
+        'detailed_report': detailed_report,
+        'job_types': job_types,
+        'statuses': statuses,
+        'status_mapping': status_mapping,
+        'total_applications': applications.count(),
+        'total_jobs': jobs.count(),
+    }
+    
+    return render(request, 'accounts/recruiter_reports.html', context)

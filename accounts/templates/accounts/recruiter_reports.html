@@ -1,0 +1,566 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Reports - Recruiter{% endblock %}
+
+{% block content %}
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    body.dark-mode {
+        background-color: #1a1a1a;
+        color: #f3f4f6;
+    }
+
+    .dashboard-wrapper {
+        padding: 40px 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Header */
+    .dashboard-header {
+        margin-bottom: 40px;
+        border-bottom: 2px solid #e8eaed;
+        padding-bottom: 20px;
+    }
+
+    body.dark-mode .dashboard-header {
+        border-bottom-color: #404040;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+        color: #1f2937;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    body.dark-mode .dashboard-header h1 {
+        color: #f3f4f6;
+    }
+
+    .dashboard-header p {
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+
+    body.dark-mode .dashboard-header p {
+        color: #d1d5db;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-box {
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border-left: 5px solid #3b82f6;
+        transition: all 0.3s ease;
+    }
+
+    body.dark-mode .stat-box {
+        background: #2d2d2d;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-box:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-4px);
+    }
+
+    body.dark-mode .stat-box:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    body.dark-mode .stat-label {
+        color: #d1d5db;
+    }
+
+    .stat-number {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    body.dark-mode .stat-number {
+        color: #f3f4f6;
+    }
+
+    /* Section Container */
+    .section-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        margin-bottom: 40px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    body.dark-mode .section-card {
+        background: #2d2d2d;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .section-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .section-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-header {
+        padding: 24px;
+        border-bottom: 1px solid #e5e7eb;
+        background: linear-gradient(135deg, #f0f9ff 0%, #f0f5ff 100%);
+        border-left: 5px solid #3b82f6;
+    }
+
+    body.dark-mode .section-header {
+        border-bottom-color: #404040;
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    }
+
+    .section-header h2 {
+        font-size: 1.3rem;
+        color: #1f2937;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    body.dark-mode .section-header h2 {
+        color: #f3f4f6;
+    }
+
+    .section-body {
+        padding: 24px;
+    }
+
+    body.dark-mode .section-body {
+        background: #2d2d2d;
+    }
+
+    /* Chart Container */
+    .chart-container {
+        position: relative;
+        height: 350px;
+        margin: 0;
+    }
+
+    /* Filter Section */
+    .filter-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    body.dark-mode .filter-group label {
+        color: #e5e7eb;
+    }
+
+    .filter-group select {
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background: white;
+        color: #1f2937;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    body.dark-mode .filter-group select {
+        background: #3d3d3d;
+        border-color: #5d5d5d;
+        color: #f3f4f6;
+    }
+
+    .filter-group select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .filter-button {
+        align-self: flex-end;
+        padding: 10px 24px;
+        background: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .filter-button:hover {
+        background: #2563eb;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Table Styles */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .reports-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .reports-table thead {
+        background-color: #f9fafb;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    body.dark-mode .reports-table thead {
+        background-color: #1f2937;
+        border-bottom-color: #404040;
+    }
+
+    .reports-table th {
+        padding: 16px;
+        text-align: left;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    body.dark-mode .reports-table th {
+        color: #e5e7eb;
+    }
+
+    .reports-table td {
+        padding: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 0.95rem;
+        color: #374151;
+    }
+
+    body.dark-mode .reports-table td {
+        border-bottom-color: #404040;
+        color: #e5e7eb;
+    }
+
+    .reports-table tbody tr:hover {
+        background-color: #f9fafb;
+    }
+
+    body.dark-mode .reports-table tbody tr:hover {
+        background-color: #383838;
+    }
+
+    .reports-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Status Badges */
+    .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .badge-applied {
+        background-color: #e0e7ff;
+        color: #4338ca;
+    }
+
+    body.dark-mode .badge-applied {
+        background-color: rgba(59, 130, 246, 0.2);
+        color: #93c5fd;
+    }
+
+    .badge-shortlisted {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    body.dark-mode .badge-shortlisted {
+        background-color: rgba(245, 158, 11, 0.2);
+        color: #fcd34d;
+    }
+
+    .badge-offered {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+
+    body.dark-mode .badge-offered {
+        background-color: rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+    }
+
+    .badge-rejected {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    body.dark-mode .badge-rejected {
+        background-color: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+    }
+
+    /* Funnel Chart */
+    .funnel-chart {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .funnel-bar {
+        height: 50px;
+        background: linear-gradient(135deg, #3b82f6 0%, #1f2937 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    body.dark-mode .funnel-bar {
+        background: linear-gradient(135deg, #60a5fa 0%, #4b5563 100%);
+    }
+
+    .funnel-bar:hover {
+        transform: scaleX(1.02);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Two Column Layout */
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    @media (max-width: 1200px) {
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 20px 15px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .stat-box {
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+
+        .filter-section {
+            grid-template-columns: 1fr;
+        }
+
+        .chart-container {
+            height: 280px;
+        }
+
+        .reports-table th,
+        .reports-table td {
+            padding: 12px 8px;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <!-- Header with Stats -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px; align-items: start;">
+        <!-- Header -->
+        <div class="dashboard-header" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">
+            <h1>Reports & Analytics</h1>
+            <p>Track recruitment metrics, application funnel, and job performance</p>
+        </div>
+
+        <!-- Key Metrics on the Right -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="stat-box">
+                <div class="stat-label">Total Applications</div>
+                <div class="stat-number">{{ total_applications }}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Posted Jobs</div>
+                <div class="stat-number">{{ total_jobs }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 7: Filter Section -->
+    <div class="section-card">
+        <div class="section-header">
+            <h2>Filter Applications</h2>
+        </div>
+        <div class="section-body">
+            <form method="GET" class="filter-section">
+                <div class="filter-group">
+                    <label for="date_filter">Date Range</label>
+                    <select id="date_filter" name="date_filter">
+                        <option value="all" {% if request.GET.date_filter != 'this_month' and request.GET.date_filter != 'last_3_months' %}selected{% endif %}>All Time</option>
+                        <option value="this_month" {% if request.GET.date_filter == 'this_month' %}selected{% endif %}>This Month</option>
+                        <option value="last_3_months" {% if request.GET.date_filter == 'last_3_months' %}selected{% endif %}>Last 3 Months</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="job_type">Job Type</label>
+                    <select id="job_type" name="job_type">
+                        <option value="all">All Types</option>
+                        {% for job_type in job_types %}
+                            <option value="{{ job_type }}" {% if request.GET.job_type == job_type %}selected{% endif %}>{{ job_type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="status">Application Status</label>
+                    <select id="status" name="status">
+                        <option value="all">All Statuses</option>
+                        <option value="applied" {% if request.GET.status == 'applied' %}selected{% endif %}>Applied</option>
+                        <option value="shortlisted" {% if request.GET.status == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
+                        <option value="intervie_1" {% if request.GET.status == 'intervie_1' %}selected{% endif %}>L1 Interview</option>
+                        <option value="interview_technical" {% if request.GET.status == 'interview_technical' %}selected{% endif %}>Technical</option>
+                        <option value="hr_cleared" {% if request.GET.status == 'hr_cleared' %}selected{% endif %}>HR Cleared</option>
+                        <option value="offered" {% if request.GET.status == 'offered' %}selected{% endif %}>Offered</option>
+                        <option value="rejected" {% if request.GET.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                        <option value="hold_on" {% if request.GET.status == 'hold_on' %}selected{% endif %}>On Hold</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="filter-button">Apply Filters</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Section 6: Detailed Report Table -->
+    <div class="section-card">
+        <div class="section-header">
+            <h2>Detailed Application Report ({{ detailed_report.count }} results)</h2>
+        </div>
+        <div class="section-body">
+            {% if detailed_report %}
+                <div class="table-container">
+                    <table class="reports-table">
+                        <thead>
+                            <tr>
+                                <th>Candidate Name</th>
+                                <th>Job Title</th>
+                                <th>Job Type</th>
+                                <th>Status</th>
+                                <th>Applied Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in detailed_report %}
+                                <tr>
+                                    <td style="font-weight: 600;">{{ application.student.full_name }}</td>
+                                    <td>{{ application.job.title }}</td>
+                                    <td><span class="badge badge-applied">{{ application.job.job_type }}</span></td>
+                                    <td>
+                                        {% if application.status == 'applied' %}
+                                            <span class="badge badge-applied">Applied</span>
+                                        {% elif application.status == 'shortlisted' %}
+                                            <span class="badge badge-shortlisted">Shortlisted</span>
+                                        {% elif application.status == 'offered' %}
+                                            <span class="badge badge-offered">Offered</span>
+                                        {% elif application.status == 'rejected' %}
+                                            <span class="badge badge-rejected">Rejected</span>
+                                        {% elif application.status == 'intervie_1' %}
+                                            <span class="badge badge-shortlisted">L1 Interview</span>
+                                        {% elif application.status == 'interview_technical' %}
+                                            <span class="badge badge-shortlisted">Technical</span>
+                                        {% elif application.status == 'hr_cleared' %}
+                                            <span class="badge badge-shortlisted">HR Cleared</span>
+                                        {% elif application.status == 'hold_on' %}
+                                            <span class="badge badge-applied">On Hold</span>
+                                        {% else %}
+                                            <span class="badge badge-applied">{{ application.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ application.applied_at|date:"M d, Y" }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 60px 20px; color: #6b7280;">
+                    <p style="font-size: 1.1rem;">No applications found with current filters</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Custom Template Filter for Dictionary Lookup -->
+<script>
+    // Add custom template filter for dictionary lookup
+    document.addEventListener('DOMContentLoaded', function() {
+        // This handles dark mode toggle and any other initialization
+    });
+</script>
+
+{% endblock %}

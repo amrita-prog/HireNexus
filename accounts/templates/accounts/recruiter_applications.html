@@ -1,0 +1,326 @@
+{% extends 'accounts/base.html' %}
+{% block title %} Applications {% endblock %}
+
+{% block content %}
+<style>
+    .container {
+        color: var(--text-primary);
+    }
+
+    h2 {
+        color: var(--text-primary);
+        margin: 2rem 0;
+    }
+
+    .table {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+        border-color: var(--border-color) !important;
+    }
+
+    body.dark-mode .table {
+        background: #2d2d2d !important;
+        color: #f3f4f6 !important;
+    }
+
+    .table-dark {
+        background: #3b82f6 !important;
+        color: white !important;
+    }
+
+    .table thead {
+        background: #3b82f6 !important;
+    }
+
+    .table thead th {
+        background: #3b82f6 !important;
+        color: white !important;
+        border-color: #3b82f6 !important;
+        font-weight: 600;
+    }
+
+    .table tbody td {
+        border-color: var(--border-color) !important;
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary) !important;
+        padding: 12px;
+    }
+
+    body.dark-mode .table tbody td {
+        background-color: #2d2d2d !important;
+        color: #f3f4f6 !important;
+        border-color: #404040 !important;
+    }
+
+    .table tbody tr {
+        background: var(--bg-secondary) !important;
+    }
+
+    body.dark-mode .table tbody tr {
+        background-color: #2d2d2d !important;
+    }
+
+    .table tbody tr:hover {
+        background: rgba(59, 130, 246, 0.1) !important;
+    }
+
+    body.dark-mode .table tbody tr:hover {
+        background: rgba(59, 130, 246, 0.2) !important;
+    }
+
+    .badge {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 12px;
+    }
+
+    .badge-applied {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    body.dark-mode .badge-applied {
+        background: rgba(59, 130, 246, 0.2);
+        color: #93c5fd;
+    }
+
+    .badge-shortlisted {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    body.dark-mode .badge-shortlisted {
+        background: rgba(16, 185, 129, 0.2);
+        color: #86efac;
+    }
+
+    .badge-rejected {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    body.dark-mode .badge-rejected {
+        background: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+    }
+
+    .badge-offered {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    body.dark-mode .badge-offered {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fcd34d;
+    }
+
+    .badge-interview_technical {
+        background: #e9d5ff;
+        color: #6b21a8;
+    }
+
+    body.dark-mode .badge-interview_technical {
+        background: rgba(168, 85, 247, 0.2);
+        color: #d8b4fe;
+    }
+
+    .badge-hr_cleared {
+        background: #cffafe;
+        color: #164e63;
+    }
+
+    body.dark-mode .badge-hr_cleared {
+        background: rgba(34, 211, 238, 0.2);
+        color: #a5f3fc;
+    }
+
+    .badge-intervie_1 {
+        background: #f3e8ff;
+        color: #581c87;
+    }
+
+    body.dark-mode .badge-intervie_1 {
+        background: rgba(139, 92, 246, 0.2);
+        color: #ddd6fe;
+    }
+
+    .badge-hold_on {
+        background: #fed7aa;
+        color: #7c2d12;
+    }
+
+    body.dark-mode .badge-hold_on {
+        background: rgba(251, 146, 60, 0.2);
+        color: #ffedd5;
+    }
+
+    .text-success {
+        color: #3b82f6 !important;
+    }
+
+    .dataTables_wrapper {
+        color: var(--text-primary) !important;
+    }
+
+    .dataTables_length,
+    .dataTables_filter {
+        color: var(--text-primary) !important;
+    }
+
+    .dataTables_length label,
+    .dataTables_filter label {
+        color: var(--text-primary) !important;
+    }
+
+    .dataTables_filter input {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+        border: 1px solid var(--border-color) !important;
+    }
+
+    body.dark-mode .dataTables_filter input {
+        background: #404040 !important;
+        color: #f3f4f6 !important;
+        border: 1px solid #505050 !important;
+    }
+
+    .dataTables_filter input::placeholder {
+        color: var(--text-secondary) !important;
+    }
+
+    .dataTables_filter input:focus {
+        background: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+        border-color: #3b82f6 !important;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    }
+
+    body.dark-mode .dataTables_filter input:focus {
+        background: #404040 !important;
+        color: #f3f4f6 !important;
+    }
+
+    .dataTables_info {
+        color: var(--text-secondary) !important;
+    }
+
+    .dataTables_paginate .paginate_button {
+        color: var(--text-primary) !important;
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+    }
+
+    body.dark-mode .dataTables_paginate .paginate_button {
+        background: #404040 !important;
+        color: #f3f4f6 !important;
+        border-color: #505050 !important;
+    }
+
+    .dataTables_paginate .paginate_button:hover {
+        background: #3b82f6 !important;
+        color: white !important;
+        border-color: #3b82f6 !important;
+    }
+
+    .dataTables_paginate .paginate_button.current {
+        background: #3b82f6 !important;
+        color: white !important;
+        border-color: #3b82f6 !important;
+    }
+
+    a {
+        color: #3b82f6;
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+    body.dark-mode a {
+        color: #60a5fa;
+    }
+
+    body.dark-mode a:hover {
+        color: #93c5fd;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-success">All Applications</h2>
+    
+    {% if applications %}
+    <table id="applicationsTable" class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Job Title</th>
+                <th>Candidate Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Applied On</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td>{{ app.job.title }}</td>
+                <td>{{ app.student.full_name }}</td>
+                <td>{{ app.student.email }}</td>
+                <td>{{ app.student.phone }}</td>
+                <td>
+                    {% if app.status == 'applied' %}
+                        <span class="badge badge-applied">Applied</span>
+                    {% elif app.status == 'shortlisted' %}
+                        <span class="badge badge-shortlisted">Shortlisted</span>
+                    {% elif app.status == 'rejected' %}
+                        <span class="badge badge-rejected">Rejected</span>
+                    {% elif app.status == 'offered' %}
+                        <span class="badge badge-offered">Offered</span>
+                    {% elif app.status == 'interview_technical' %}
+                        <span class="badge badge-interview_technical">Technical Cleared</span>
+                    {% elif app.status == 'hr_cleared' %}
+                        <span class="badge badge-hr_cleared">HR Cleared</span>
+                    {% elif app.status == 'intervie_1' %}
+                        <span class="badge badge-intervie_1">L1 Cleared</span>
+                    {% elif app.status == 'hold_on' %}
+                        <span class="badge badge-hold_on">Hold On</span>
+                    {% else %}
+                        <span class="badge">{{ app.status }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ app.applied_at|date:"d M Y" }}</td>
+                <td>
+                    <a href="{% url 'view_applicants' app.job.id %}" class="btn btn-sm btn-primary">View Job</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-warning">
+        <p class="mb-0">No applications found.</p>
+    </div>
+    {% endif %}
+</div>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#applicationsTable').DataTable({
+            pageLength: 10,
+            order: [[5, 'desc']]
+        });
+    });
+</script>
+
+{% endblock %}

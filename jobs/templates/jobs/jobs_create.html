@@ -1,61 +1,355 @@
 {% extends 'accounts/base.html' %}
-{% load widget_tweaks %} # third party validation
-{% block title %} Post a new job {% endblock %}
+{% load widget_tweaks %}
+{% block title %}Post a New Job{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card-header bg-dark text-white text-center py-3">
-                <h3 class="mb-0">Post a New Job</h3>
-            </div>
-            <div class="card shadow-lg border-0">
-        <div class="card-body p-4">
-          <form method="POST" novalidate>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    body.dark-mode {
+        background-color: #1a1a1a;
+        color: #f3f4f6;
+    }
+
+    .form-wrapper {
+        padding: 40px 20px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    /* Header */
+    .form-header {
+        margin-bottom: 40px;
+        border-bottom: 2px solid #e8eaed;
+        padding-bottom: 20px;
+    }
+
+    body.dark-mode .form-header {
+        border-bottom-color: #404040;
+    }
+
+    .form-header h1 {
+        font-size: 2rem;
+        color: #1f2937;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    body.dark-mode .form-header h1 {
+        color: #f3f4f6;
+    }
+
+    .form-header p {
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+
+    body.dark-mode .form-header p {
+        color: #d1d5db;
+    }
+
+    /* Form Container */
+    .form-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        padding: 40px;
+        transition: all 0.3s ease;
+    }
+
+    body.dark-mode .form-card {
+        background: #2d2d2d;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .form-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    body.dark-mode .form-label {
+        color: #e5e7eb;
+    }
+
+    .form-control,
+    .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background: white;
+        color: #1f2937;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body.dark-mode .form-control,
+    body.dark-mode .form-select {
+        background: #3d3d3d;
+        border-color: #5d5d5d;
+        color: #f3f4f6;
+    }
+
+    .form-control::placeholder {
+        color: #9ca3af;
+    }
+
+    body.dark-mode .form-control::placeholder {
+        color: #a0a9b8;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    body.dark-mode .form-control:focus,
+    body.dark-mode .form-select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    /* Textarea */
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    /* Two Column Layout */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Form Group Full Width */
+    .form-group-full {
+        grid-column: 1 / -1;
+    }
+
+    /* Button Styles */
+    .button-group {
+        display: flex;
+        gap: 16px;
+        margin-top: 40px;
+    }
+
+    .btn-submit {
+        flex: 1;
+        padding: 14px 32px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        flex: 1;
+        padding: 14px 32px;
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    body.dark-mode .btn-cancel {
+        background: #3d3d3d;
+        color: #e5e7eb;
+        border-color: #5d5d5d;
+    }
+
+    .btn-cancel:hover {
+        background: #e5e7eb;
+    }
+
+    body.dark-mode .btn-cancel:hover {
+        background: #4d4d4d;
+    }
+
+    /* Error Messages */
+    .error-message {
+        color: #ef4444;
+        font-size: 0.85rem;
+        margin-top: 6px;
+        display: block;
+    }
+
+    body.dark-mode .error-message {
+        color: #fca5a5;
+    }
+
+    .form-group.error .form-control,
+    .form-group.error .form-select {
+        border-color: #ef4444;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .form-wrapper {
+            padding: 20px 15px;
+        }
+
+        .form-card {
+            padding: 24px;
+        }
+
+        .form-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .button-group {
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-submit,
+        .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="form-wrapper">
+    <!-- Header -->
+    <div class="form-header">
+        <h1>Post a New Job</h1>
+        <p>Fill in the details below to create a new job posting</p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+        <form method="POST" novalidate>
             {% csrf_token %}
 
-            <div class="form-floating mb-3">
-              {{ form_data.title|add_class:"form-control" }}
-              <label for="{{ form_data.title.id_for_label }}">Job Title</label>
+            <!-- Two Column Layout -->
+            <div class="form-grid">
+                <!-- Job Title -->
+                <div class="form-group">
+                    <label class="form-label" for="{{ form_data.title.id_for_label }}">Job Title</label>
+                    {{ form_data.title|add_class:"form-control" }}
+                    {% if form_data.title.errors %}
+                        <span class="error-message">{{ form_data.title.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Company -->
+                <div class="form-group">
+                    <label class="form-label" for="{{ form_data.company.id_for_label }}">Company</label>
+                    {{ form_data.company|add_class:"form-control" }}
+                    {% if form_data.company.errors %}
+                        <span class="error-message">{{ form_data.company.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Description (Full Width) -->
+                <div class="form-group form-group-full">
+                    <label class="form-label" for="{{ form_data.description.id_for_label }}">Description</label>
+                    {{ form_data.description|add_class:"form-control" }}
+                    {% if form_data.description.errors %}
+                        <span class="error-message">{{ form_data.description.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Location -->
+                <div class="form-group">
+                    <label class="form-label" for="{{ form_data.location.id_for_label }}">Location</label>
+                    {{ form_data.location|add_class:"form-control" }}
+                    {% if form_data.location.errors %}
+                        <span class="error-message">{{ form_data.location.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Job Type -->
+                <div class="form-group">
+                    <label class="form-label" for="{{ form_data.job_type.id_for_label }}">Job Type</label>
+                    {{ form_data.job_type|add_class:"form-select" }}
+                    {% if form_data.job_type.errors %}
+                        <span class="error-message">{{ form_data.job_type.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Deadline -->
+                <div class="form-group">
+                    <label class="form-label" for="{{ form_data.deadline.id_for_label }}">Deadline</label>
+                    {{ form_data.deadline|add_class:"form-control" }}
+                    {% if form_data.deadline.errors %}
+                        <span class="error-message">{{ form_data.deadline.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Salary -->
+                <div class="form-group">
+                    <label class="form-label" for="{{ form_data.salary.id_for_label }}">Salary (₹)</label>
+                    {{ form_data.salary|add_class:"form-control" }}
+                    {% if form_data.salary.errors %}
+                        <span class="error-message">{{ form_data.salary.errors.0 }}</span>
+                    {% endif %}
+                </div>
             </div>
 
-            <div class="form-floating mb-3">
-              {{ form_data.description|add_class:"form-control" }}
-              <label for="{{ form_data.description.id_for_label }}">Description</label>
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="submit" class="btn-submit">Post Job</button>
+                <a href="{% url 'recruiter_jobs' %}" class="btn-cancel">Cancel</a>
             </div>
-
-            <div class="form-floating mb-3">
-              {{ form_data.company|add_class:"form-control" }}
-              <label for="{{ form_data.company.id_for_label }}">Company</label>
-            </div>
-
-            <div class="form-floating mb-3">
-              {{ form_data.location|add_class:"form-control" }}
-              <label for="{{ form_data.location.id_for_label }}">Location</label>
-            </div>
-
-            <div class="form-floating mb-3">
-              {{ form_data.job_type|add_class:"form-select" }}
-              <label for="{{ form_data.job_type.id_for_label }}">Job Type</label>
-            </div>
-
-            <div class="form-floating mb-3">
-              {{ form_data.deadline|add_class:"form-control" }}
-              <label for="{{ form_data.deadline.id_for_label }}">Deadline</label>
-            </div>
-
-            <div class="form-floating mb-4">
-              {{ form_data.salary|add_class:"form-control" }}
-              <label for="{{ form_data.salary.id_for_label }}">Salary (₹)</label>
-            </div>
-
-            <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
-              Post Job
-            </button>
-          </form>
-        </div>
-      </div>
-        </div>
+        </form>
     </div>
 </div>
 
